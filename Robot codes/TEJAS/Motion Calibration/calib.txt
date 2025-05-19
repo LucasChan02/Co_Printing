@@ -1,0 +1,31 @@
+ import sys
+  2 import time
+  3 import rospy
+  4 from kinematics import ik_transform
+  5 from armpi_pro import bus_servo_control
+  6 from hiwonder_servo_msgs.msg import MultiRawIdPosDur
+  7 ik = ik_transform.ArmIK()
+  8 
+  9 
+ 10 def stop():
+ 11 
+ 12      # 回到开机初始位置
+ 13      target = ik.setPitchRanges((0.00, 0.0, 0.0416), -120, -180, 0)
+ 14      if target:
+ 15          servo_data = target[1]
+ 16          bus_servo_control.set_servos(joints_pub, 1500, ((1, 10), (2, 50), (3, servo_data['servo3']),
+ 17                          (4, servo_data['servo4']),(5, servo_data['servo5']),(6, servo_data['servo6'])))
+ 18 if __name__ == '__main__':
+ 19 
+ 20      rospy.init_node('kinematics_demo', log_level=rospy.DEBUG)
+ 21      rospy.on_shutdown(stop)
+ 22 
+ 23      joints_pub = rospy.Publisher('/servo_controllers/port_id_1/multi_id_pos_dur', MultiRawIdPosDur, queue_size=1)
+ 24      rospy.sleep(0.2)
+ 25      target = ik.setPitchRanges((0.0, 0.1, 0.0416), -120, -180, 0) # 运动学求解
+ 26      if target: # 判断是否有解
+ 27           servo_data = target[1]
+ 28           # 驱动机械臂移动
+ 29           bus_servo_control.set_servos(joints_pub, 1500, ((1,10), (2, 50), (3, servo_data['servo3']),
+ 30                           (4, servo_data['servo4']),(5, servo_data['servo5']),(6, servo_data['servo6'])))
+ 31      time.sleep(2.5)

@@ -1,0 +1,1 @@
+﻿In lesson Raspberry Pi basics lesson, the image written to the Raspberry Pi is the official image, not the robot image. ArmPi Pro comes with system image. Before starting to learn this part of tutorial, It is recommended to learn the related ArmPi Pro tutorial first.
