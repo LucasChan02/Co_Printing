@@ -41,12 +41,33 @@ def plot_workspace(positions, angle_diffs):
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(
         positions[:, 0], positions[:, 1], positions[:, 2],
-        s=1, alpha=0.15, c=angle_diffs, cmap='RdYlGn_r'
+        s=0.2, alpha=0.4, c=angle_diffs, cmap='RdYlGn_r'
     )
     ax.set_xlabel('X (m)')
     ax.set_ylabel('Y (m)')
     ax.set_zlabel('Z (m)')
     ax.set_title('Robot Reachable Workspace')
+    
+    # Set equal aspect ratio
+    x_limits = ax.get_xlim3d()
+    y_limits = ax.get_ylim3d()
+    z_limits = ax.get_zlim3d()
+
+    x_range = abs(x_limits[1] - x_limits[0])
+    x_middle = np.mean(x_limits)
+    y_range = abs(y_limits[1] - y_limits[0])
+    y_middle = np.mean(y_limits)
+    z_range = abs(z_limits[1] - z_limits[0])
+    z_middle = np.mean(z_limits)
+
+    plot_radius = 0.5 * max([x_range, y_range, z_range])
+
+    ax.set_xlim3d([x_middle - plot_radius, x_middle + plot_radius])
+    ax.set_ylim3d([y_middle - plot_radius, y_middle + plot_radius])
+    ax.set_zlim3d([z_middle - plot_radius, z_middle + plot_radius])
+    
+    # Enable interactive controls
+    ax.mouse_init()
     plt.show()
 
 
@@ -93,5 +114,5 @@ def plot_workspace(positions, angle_diffs):
 
 if __name__ == '__main__':
     # Adjust num_samples for resolution (higher = slower)
-    positions, angle_diffs = compute_workspace(num_samples = 10)  # samples per joint
+    positions, angle_diffs = compute_workspace(num_samples = 12)  # samples per joint
     plot_workspace(positions, angle_diffs)

@@ -42,12 +42,12 @@ robot.add_body(
     1, parent='ground', name='shoulder_link', pos=[0, 0, 0.095],
     quat=[1, 0, 0, 0], ipos=[2.23482e-05, 4.14609e-05, 0.0066287], iquat=[0.0130352, 0.706387, 0.012996, 0.707586],
     mass=0.480879, inertia=[0.000588946, 0.000555655, 0.000378999],
-    joint_axis=[0, 0, 1], joint_range=[-1.5, 1.5]
+    joint_axis=[0, 0, 1], joint_range=[-0.76, 0.76]
 )
 
 
 robot.add_body(
-    2, parent='shoulder_link', name='upper_arm_link', pos=[0, 0, 0.065],
+    2, parent='shoulder_link', name='upper_arm_link', pos=[0, 0, 0.125],
     quat=[1, 0, 0, 0], ipos=[0.0171605, 2.725e-07, 0.191323], iquat=[0.705539, 0.0470667, -0.0470667, 0.705539],
     mass=0.430811, inertia=[0.00364425, 0.003463, 0.000399348],
     joint_axis=[0, 1, 0], joint_range=[-1.52, 1.52]
@@ -65,7 +65,7 @@ robot.add_body(
     4, parent='upper_forearm_link', name='lower_forearm_link', pos=[0, 0, 0.094],
     quat=[1, 0, 0, 0], ipos=[0.0374395, 0.00522252, 0], iquat=[-0.0732511, 0.703302, 0.0732511, 0.703302],
     mass=0.220991, inertia=[0.0001834, 0.000172527, 5.88633e-05],
-    joint_axis=[0, 1, 0], joint_range=[-2.006, 2.006]
+    joint_axis=[0, 1, 0], joint_range=[-0, 2.006]
 )
 
 # robot.add_body(

@@ -5,6 +5,7 @@ import os
 print('''sudo python3 setup.py install''')
 
 setup(name="kinematics", version="1.0", description="kinematics for arm", author="aiden", py_modules=['kinematics.ik_transform'])
+setup(name="kinematics", version="1.0", description="kinematics for arm", author="lucas", py_modules=['kinematics.ik_transform_rev'])
 
 if sys.argv[1] == 'install':
     try:
