@@ -457,6 +457,12 @@ intelligent_transport_BINARY_DIR:STATIC=/home/ubuntu/armpi_pro/build/intelligent
 intelligent_transport_SOURCE_DIR:STATIC=/home/ubuntu/armpi_pro/src/intelligent_transport
 
 //Value Computed by CMake
+kinematics_BINARY_DIR:STATIC=/home/ubuntu/armpi_pro/build/armpi_pro_kinematics
+
+//Value Computed by CMake
+kinematics_SOURCE_DIR:STATIC=/home/ubuntu/armpi_pro/src/armpi_pro_kinematics
+
+//Value Computed by CMake
 lab_config_BINARY_DIR:STATIC=/home/ubuntu/armpi_pro/build/lab_config
 
 //Value Computed by CMake
@@ -638,7 +644,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=20
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=21
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

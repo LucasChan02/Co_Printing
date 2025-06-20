@@ -453,8 +453,8 @@
  *
  * *** IT IS HIGHLY RECOMMENDED TO LEAVE THIS OPTION ENABLED! ***
  */
-#define PREVENT_COLD_EXTRUSION
-#define EXTRUDE_MINTEMP 170
+// #define PREVENT_COLD_EXTRUSION
+// #define EXTRUDE_MINTEMP 170
 
 /**
  * Prevent a single extrusion longer than EXTRUDE_MAXLENGTH.
@@ -608,8 +608,9 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
-// #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 415 } //for BMG
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 145.5 } //for single gear
+// #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 25.714 } //for BMG
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 108 } //for single gear
+
 
 /**
  * Default Max Feed Rate (mm/s)

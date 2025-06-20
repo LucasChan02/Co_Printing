@@ -1,0 +1,7 @@
+set(kinematics_SETUP_PY_SETUP_MODULE "distutils.core")
+set(kinematics_SETUP_PY_VERSION "0.1.0")
+set(kinematics_SETUP_PY_SCRIPTS "")
+set(kinematics_SETUP_PY_PACKAGES "")
+set(kinematics_SETUP_PY_PACKAGE_DIRS "")
+set(kinematics_SETUP_PY_MODULES "kinematics/ik_transform_rev.py")
+set(kinematics_SETUP_PY_MODULE_DIRS "kinematics/ik_transform_rev")

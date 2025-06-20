@@ -198,6 +198,13 @@
 /home/ubuntu/armpi_pro/build/intelligent_transport/CMakeFiles/intelligent_transport_generate_messages_py.dir
 /home/ubuntu/armpi_pro/build/intelligent_transport/CMakeFiles/rebuild_cache.dir
 /home/ubuntu/armpi_pro/build/intelligent_transport/CMakeFiles/test.dir
+/home/ubuntu/armpi_pro/build/armpi_pro_kinematics/CMakeFiles/install/strip.dir
+/home/ubuntu/armpi_pro/build/armpi_pro_kinematics/CMakeFiles/edit_cache.dir
+/home/ubuntu/armpi_pro/build/armpi_pro_kinematics/CMakeFiles/list_install_components.dir
+/home/ubuntu/armpi_pro/build/armpi_pro_kinematics/CMakeFiles/test.dir
+/home/ubuntu/armpi_pro/build/armpi_pro_kinematics/CMakeFiles/install/local.dir
+/home/ubuntu/armpi_pro/build/armpi_pro_kinematics/CMakeFiles/rebuild_cache.dir
+/home/ubuntu/armpi_pro/build/armpi_pro_kinematics/CMakeFiles/install.dir
 /home/ubuntu/armpi_pro/build/lab_config/CMakeFiles/install/strip.dir
 /home/ubuntu/armpi_pro/build/lab_config/CMakeFiles/install/local.dir
 /home/ubuntu/armpi_pro/build/lab_config/CMakeFiles/list_install_components.dir

@@ -17,20 +17,20 @@ from ranger_file_selection import ranger_file_selection
 # --- Configuration Constants ---
 
 # -- Serial Communication 
-SERIAL_PORT = '/dev/ttyUSB0'
+SERIAL_PORT = '/dev/ttyACM0'
 BAUDRATE = 250000
 
 # -- ROS and Robotic Arm Configuration
-DEFAULT_ARM_SPEED_M_PER_S = 0.02
-INTERPOLATION_TIME_STEP_S = 0.02
+DEFAULT_ARM_SPEED_M_PER_S = 0.012
+INTERPOLATION_TIME_STEP_S = 0.1
 Z_OFFSET_M = 0.018
 PITCH_CONSTRAINT_MIN_DEG = -180.0
 PITCH_CONSTRAINT_MAX_DEG = 0.0
 SERVO_1_POS = 200
 SERVO_2_POS = 500
-PARK_X_M = 0.01
+PARK_X_M = 0.012
 PARK_Y_M = 0.00
-PARK_Z_M = 0.04
+PARK_Z_M = 0.05
 PARK_PITCH_DEG = -180.0
 
 # -- Logging
@@ -113,14 +113,14 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
     """
     global current_feed_rate_mm_per_min, last_position_m
 
-    print(f"--- Starting G-code stream: {gcode_filepath} ---")
-    write_to_log(f"--- Starting G-code stream: {gcode_filepath} ---")
+    print(f"[INFO] Starting G-code stream: {gcode_filepath}")
+    write_to_log(f"[INFO] Starting G-code stream: {gcode_filepath}")
 
     with open(gcode_filepath, 'r') as f:
         line_count = 0
         for line in f:
             if rospy.is_shutdown():
-                print("ROS shutdown detected. Stopping G-code stream.")
+                print("[INFO] ROS shutdown detected. Stopping G-code stream.")
                 break
 
             line_count += 1
@@ -129,7 +129,7 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
             if not command or command.startswith(';'):
                 continue
 
-            print(f"G-code Line {line_count}: {command}")
+            rospy.loginfo(f"G-code Line {line_count}: {command}")
             write_to_log(f"> {command}")
             ser.write(command.encode() + b'\n')
             ser.write(b'M400\n')
@@ -156,7 +156,7 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
                     num_interpolation_steps = max(1, int(round(time_for_segment_s / INTERPOLATION_TIME_STEP_S)))
                     servo_command_duration_ms = int(INTERPOLATION_TIME_STEP_S * 1000)
 
-                    rospy.loginfo(f"  Arm Move: Dist: {distance_m*1000:.2f}mm, Speed: {feed_rate_m_per_s*1000:.2f}mm/s, Steps: {num_interpolation_steps}")
+                    rospy.loginfo(f"Arm Move: Dist: {distance_m*1000:.2f}mm, Speed: {feed_rate_m_per_s*1000:.2f}mm/s, Steps: {num_interpolation_steps}")
 
                     for step in range(1, num_interpolation_steps + 1):
                         if rospy.is_shutdown(): break
@@ -167,18 +167,31 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
                         move_arm_to_target((interp_x, interp_y, interp_z), last_position_m['pitch'], servo_command_duration_ms)
                         time.sleep(INTERPOLATION_TIME_STEP_S)
                 else:
-                     rospy.loginfo("  Arm Move: No change in position, skipping.")
+                     rospy.loginfo("Arm Move: No change in position, skipping.")
 
             if move_data:
                 # For G0/G1, we use M400/M118 to wait for the move to physically finish.
                 while not rospy.is_shutdown():
                     response = ser.readline().decode('utf-8', errors='ignore').strip()
                     if response:
-                        print(f"  Printer Response: {response}")
+                        if not 'ok' in response:
+                            rospy.loginfo(f"Printer Response: {response}")
                         write_to_log(f"< {response}")
                     # M118 prints the message directly, so we check for an exact match.
                     if response == 'done':
-                        rospy.loginfo("  Printer move confirmed complete by M118.")
+                        break
+                    if 'error' in response.lower():
+                        raise Exception(f"Printer reported an error on line {line_count}")
+
+            if command.strip().startswith(('M109', 'G92')):
+                while not rospy.is_shutdown():
+                    response = ser.readline().decode('utf-8', errors='ignore').strip()
+                    rospy.sleep(0.04)
+                    if response:
+                        if not 'ok' in response:
+                            rospy.loginfo(f"Printer Response: {response}")
+                        write_to_log(f"< {response}")
+                    if response == 'done':
                         break
                     if 'error' in response.lower():
                         raise Exception(f"Printer reported an error on line {line_count}")
@@ -188,8 +201,11 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
                 while not rospy.is_shutdown():
                     response = ser.readline().decode('utf-8', errors='ignore').strip()
                     if response:
-                        print(f"  Printer Response: {response}")
+                        if not 'ok' in response:
+                            rospy.loginfo(f"Printer Response: {response}")
                         write_to_log(f"< {response}")
+                    if 'busy' in response:
+                        rospy.sleep(0.2)
                     if 'ok' in response:
                         break
                     if 'error' in response.lower():
@@ -224,7 +240,7 @@ def stop_arm_movement():
         log_viewer_process.terminate()
 
     time.sleep(1.5)
-    rospy.loginfo("Cleanup complete. Exiting.")
+    rospy.loginfo("Cleanup complete.")
 
 
 def main():
@@ -247,26 +263,6 @@ def main():
     
     view_command = f'sh -c "tail -f {LOG_FILE_PATH}; echo \\"---LOGGING ENDED. Press Enter to close.---\\"; read"'
     log_viewer_process = None
-    
-    for terminal in ['xfce4-terminal', 'gnome-terminal', 'xterm']:
-        try:
-            print(f"Attempting to launch log viewer with '{terminal}'...")
-            if terminal == 'gnome-terminal':
-                args = [terminal, '--title=Printer Serial Log', '--', 'sh', '-c', view_command]
-            else: # xfce4-terminal and xterm use -T or -e
-                args = [terminal, '-T', 'Printer Serial Log', '-e', view_command]
-
-            log_viewer_process = subprocess.Popen(args)
-            print(f"Successfully launched log viewer using '{terminal}'.")
-            break
-        except FileNotFoundError:
-            continue
-        except Exception as e:
-            print(f"[WARNING] Could not launch '{terminal}': {e}. Trying next...")
-
-    if not log_viewer_process:
-        print("[WARNING] Could not open a separate log window.")
-        print("Printer responses will still be shown in this terminal.")
 
     try:
         print(f"Connecting to printer on {SERIAL_PORT} at {BAUDRATE}...")
@@ -284,7 +280,6 @@ def main():
             # if response:
             #     print(f"  Printer Init: {response}")
             #     write_to_log(f"< {response}")
-            # if "T:" in response:
             #     print("Marlin is ready.")
                 break
 

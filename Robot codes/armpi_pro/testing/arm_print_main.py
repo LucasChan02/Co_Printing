@@ -27,9 +27,9 @@ SERIAL_PORT = '/dev/ttyUSB0'
 BAUDRATE = 250000
 
 # -- ROS and Robotic Arm Configuration
-DEFAULT_ARM_SPEED_M_PER_S = 0.05
-INTERPOLATION_TIME_STEP_S = 0.04
-Z_OFFSET_M = 0.01
+DEFAULT_ARM_SPEED_M_PER_S = 0.02
+INTERPOLATION_TIME_STEP_S = 0.02
+Z_OFFSET_M = 0.018
 PITCH_CONSTRAINT_MIN_DEG = -180.0
 PITCH_CONSTRAINT_MAX_DEG = 0.0
 SERVO_1_POS = 200
@@ -145,9 +145,9 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
                 start_pos = (last_position_m['x'], last_position_m['y'], last_position_m['z'])
                 target_x = move_data.get('x', start_pos[0])
                 target_y = move_data.get('y', start_pos[1])
-                target_z = move_data.get('z', start_pos[2]) + Z_OFFSET_M
+                target_z = move_data.get('z', start_pos[2])
                 end_pos_m = (target_x, target_y, target_z)
-                print(end_pos_m)
+                # print(end_pos_m)
 
                 delta_x = end_pos_m[0] - start_pos[0]
                 delta_y = end_pos_m[1] - start_pos[1]
@@ -176,7 +176,7 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
             while True:
                 response = ser.readline().decode('utf-8', errors='ignore').strip()
                 if response:
-                     print(f"  Printer Response: {response}")
+                     print(f"\rPrinter Response: {response}", end="", flush=True)
                      write_to_log(f"< {response}")
                 if 'ok' in response:
                     break
@@ -285,6 +285,7 @@ def main():
             last_position_m['pitch'],
             2000
         )
+        stop_arm_movement()
         time.sleep(2.5)
 
         stream_gcode_and_move_robot(ser_global, gcode_file_to_print)
