@@ -24,7 +24,11 @@ BAUDRATE = 250000
 # -- ROS and Robotic Arm Configuration
 DEFAULT_ARM_SPEED_M_PER_S = 0.012
 INTERPOLATION_TIME_STEP_S = 0.1
+
+X_OFFSET_M = 0.003
+Y_OFFSET_M = -0.0015
 Z_OFFSET_M = -0.0016
+
 PITCH_CONSTRAINT_MIN_DEG = -180.0
 PITCH_CONSTRAINT_MAX_DEG = 0.0
 SERVO_1_POS = 200
@@ -63,6 +67,11 @@ def parse_gcode_for_move(command):
         if axis == 'F':
             current_feed_rate_mm_per_min = value
             move['f'] = value
+            
+        if axis == 'X':
+            move[axis.lower()] = value / 1000.0 + X_OFFSET_M
+        if axis == 'Y':
+            move[axis.lower()] = value / 1000.0 + Y_OFFSET_M
         if axis == 'Z':
             move[axis.lower()] = value / 1000.0 + Z_OFFSET_M
         else:
@@ -135,6 +144,8 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
 
             # First printing instruction
             if command.startswith(';'):
+                if 'LAYER:0' in command:
+                    rospy.sleep(10)
                 if not first_printing_instruction and command.startswith(';MESH:'): 
                         try:
                             mesh_filename = command.split(':', 1)[1].strip()
@@ -213,7 +224,7 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
             if command.strip().startswith(('M109', 'G92')):
                 while not rospy.is_shutdown():
                     response = ser.readline().decode('utf-8', errors='ignore').strip()
-                    rospy.sleep(0.04)
+                    rospy.sleep(1.04)
                     if response:
                         if not 'ok' in response:
                             rospy.loginfo(f"Printer Response: {response}")
