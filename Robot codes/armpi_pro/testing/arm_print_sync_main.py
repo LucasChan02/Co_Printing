@@ -18,19 +18,20 @@ from ranger_file_selection import ranger_file_selection
 
 # -- Serial Communication 
 SERIAL_PORT = '/dev/ttyACM0'
+# /dev/ttyACM0 for ArmPi_01, /dev/ttyUSB0 for ArmPi_02
 BAUDRATE = 250000
 
 # -- ROS and Robotic Arm Configuration
 DEFAULT_ARM_SPEED_M_PER_S = 0.012
 INTERPOLATION_TIME_STEP_S = 0.1
-Z_OFFSET_M = 0.018
+Z_OFFSET_M = -0.0016
 PITCH_CONSTRAINT_MIN_DEG = -180.0
 PITCH_CONSTRAINT_MAX_DEG = 0.0
 SERVO_1_POS = 200
 SERVO_2_POS = 500
-PARK_X_M = 0.012
-PARK_Y_M = 0.00
-PARK_Z_M = 0.05
+PARK_X_M = 0.01
+PARK_Y_M = -0.06
+PARK_Z_M = 0.12
 PARK_PITCH_DEG = -180.0
 
 # -- Logging
@@ -62,6 +63,8 @@ def parse_gcode_for_move(command):
         if axis == 'F':
             current_feed_rate_mm_per_min = value
             move['f'] = value
+        if axis == 'Z':
+            move[axis.lower()] = value / 1000.0 + Z_OFFSET_M
         else:
             move[axis.lower()] = value / 1000.0
     return move
@@ -118,6 +121,7 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
 
     with open(gcode_filepath, 'r') as f:
         line_count = 0
+        first_printing_instruction = False
         for line in f:
             if rospy.is_shutdown():
                 print("[INFO] ROS shutdown detected. Stopping G-code stream.")
@@ -126,7 +130,30 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
             line_count += 1
             command = line.strip()
 
-            if not command or command.startswith(';'):
+            if not command:
+                continue # Skip empty lines
+
+            # First printing instruction
+            if command.startswith(';'):
+                if not first_printing_instruction and command.startswith(';MESH:'): 
+                        try:
+                            mesh_filename = command.split(':', 1)[1].strip()
+                            print(f"First object in queue: {mesh_filename}")
+
+                            while not rospy.is_shutdown():
+                                user_input = input("--> Proceed ? (Y/n): ").lower().strip()
+                                if user_input in ['y', '']: # Default is Yes
+                                    print("[INFO] User approved.")
+                                    first_printing_instruction= True # Set flag
+                                    break
+                                elif user_input == 'n':
+                                    print("[INFO] User aborted.")
+                                    rospy.signal_shutdown("User aborted.")
+                                    return # Exit the function
+                                else:
+                                    print("Invalid input.")
+                        except IndexError:
+                            rospy.logwarn(f"Could not parse filename on line {line_count}.")
                 continue
 
             rospy.loginfo(f"G-code Line {line_count}: {command}")
@@ -211,7 +238,7 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
                     if 'error' in response.lower():
                         raise Exception(f"Printer reported an error on line {line_count}")
 
-    print("--- G-code file streaming complete. ---")
+    print("G-code file streaming complete.")
     write_to_log("--- G-code file streaming complete. ---")
 
 
@@ -220,7 +247,7 @@ def stop_arm_movement():
     Called on ROS shutdown (Ctrl+C). Cleans up resources.
     """
     global log_viewer_process, ser_global
-    rospy.loginfo("Shutdown signal received. Cleaning up...")
+    rospy.loginfo("Stop signal received.")
     
     # Safely turn off heater if serial port is available
     if ser_global and ser_global.is_open:
