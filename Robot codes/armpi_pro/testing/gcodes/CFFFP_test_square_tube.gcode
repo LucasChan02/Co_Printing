@@ -19,7 +19,7 @@ G0 F1200 X20 Y60 Z50
 G1 F200 E3
 G92 E0
 ;Set feedrate percentage
-M220 S62.5
+M220 S74
 M82 ;absolute extrusion mode
 G1 F900 E-3
 ;LAYER_COUNT:33
