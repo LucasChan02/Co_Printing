@@ -1,0 +1,71 @@
+#!/usr/bin/python3
+# coding=utf8
+# Date:2022/06/30
+import sys
+import time
+import signal
+import Board as Board
+
+print('''
+**********************************************************
+*******功能:幻尔科技树莓派扩展板，电机控制例程*********
+**********************************************************
+----------------------------------------------------------
+Official website:https://www.hiwonder.com
+Online mall:https://hiwonder.tmall.com
+----------------------------------------------------------
+Tips:
+ * Ctrl+C to exit
+----------------------------------------------------------
+''')
+
+
+if sys.version_info.major == 2:
+    print('Please run this program with python3!')
+    sys.exit(0)
+
+# Processing before closing
+def stop(signum, frame):
+    Board.setMotor(2, 0)   # Motor No. 2 stops
+    
+signal.signal(signal.SIGINT, stop)
+
+if __name__ == '__main__':
+    input('Press enter to start\n')
+    print('Running motor 2 @ 100 speed')
+    time.sleep(2)
+    print('Starting...\n')
+    Board.setMotor(2,100) # Motor No. 2, rotating at 100 speed
+    time.sleep(2)         # 2 second delay
+    input('Press enter to continue')
+    
+    print('Running motor 2 @ 50 speed')
+    time.sleep(2)
+    print('Starting...\n')
+    Board.setMotor(2,50)  # Motor No. 2, rotating at 50 speed
+    time.sleep(2)
+    input('Press enter to continue')
+    
+    print('Running motor 2 @ -100 speed')
+    time.sleep(2)
+    print('Starting...\n')
+    Board.setMotor(2,-100) # Motor No. 2, rotates at -100 speed
+    time.sleep(2)
+    
+    input('Press enter to continue')
+    print('Stopping...')
+    Board.setMotor(2, 0)   # Motor No. 2 stops
+    
+    print('Program run success!')
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
