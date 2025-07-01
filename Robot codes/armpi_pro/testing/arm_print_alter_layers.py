@@ -18,10 +18,10 @@ from ranger_file_selection import ranger_file_selection
 ROBOT_NUMBER = 1
 
 # -- Serial Communication 
+# /dev/ttyACM0 for ArmPi_01, /dev/ttyUSB0 for ArmPi_02
 if ROBOT_NUMBER == 1:
     # ArmPi_01
-    SERIAL_PORT = '/dev/ttyACM0'
-    # /dev/ttyACM0 for ArmPi_01, /dev/ttyUSB0 for ArmPi_02
+    SERIAL_PORT = '/dev/ttyACM0'    
 elif ROBOT_NUMBER == 2:
     # ArmPi_02
     SERIAL_PORT = '/dev/ttyUSB0'
@@ -46,9 +46,10 @@ PITCH_CONSTRAINT_MAX_DEG = 0.0
 SERVO_1_POS = 200
 SERVO_2_POS = 500
 PARK_X_M = 0.01
-PARK_Y_M = -0.06
-PARK_Z_M = 0.12
+PARK_Y_M = -0.010
+PARK_Z_M = 0.06
 PARK_PITCH_DEG = -180.0
+PARK_SPEED_MM_PER_MIN = 2400.0
 
 # -- Logging
 LOG_FILE_PATH = "/tmp/printer_serial.log"
@@ -61,6 +62,10 @@ log_viewer_process = None # Process for the external terminal window
 
 current_feed_rate_mm_per_min = 600.0
 last_position_m = {'x': 0.0, 'y': 0.0, 'z': 0.00, 'pitch': PARK_PITCH_DEG}
+
+first_printing_instruction = False
+is_skipping_layer = False
+previous_elapsed_time = 0
 
 
 def parse_gcode_for_move(command):
@@ -88,10 +93,16 @@ def parse_gcode_for_move(command):
             if axis == 'Y':
                 move[axis.lower()] = value / 1000.0 + Y_OFFSET_M
         if ROBOT_NUMBER == 2:
-            if axis == 'X':
-                move[axis.lower()] = - value / 1000.0 + X_OFFSET_M
-            if axis == 'Y':
-                move[axis.lower()] = - value / 1000.0 + Y_OFFSET_M
+            if first_printing_instruction:
+                if axis == 'X':
+                    move[axis.lower()] = - value / 1000.0 + X_OFFSET_M
+                if axis == 'Y':
+                    move[axis.lower()] = - value / 1000.0 + Y_OFFSET_M
+            else:
+                if axis == 'X':
+                    move[axis.lower()] = value / 1000.0 + X_OFFSET_M
+                if axis == 'Y':
+                    move[axis.lower()] = value / 1000.0 + Y_OFFSET_M
 
         else:
             move[axis.lower()] = value / 1000.0
@@ -138,34 +149,53 @@ def write_to_log(message):
     with open(LOG_FILE_PATH, 'a') as log_file:
         log_file.write(message + '\n')
 
+def assigned_layer(layer_num, robot_num):
+    if robot_num == 1:
+        return layer_num % 2 != 0
+    elif robot_num == 2:
+        return layer_num == 0 or layer_num % 2 == 0
+    else:
+        # Default behavior for any other robot number is to do nothing.
+        return False
+    
+def calculate_move_time(start_pos_m, end_pos_m, speed_mm_per_min):
+    """Calculates the time in seconds to move between two points at a given speed."""
+    distance_m = math.sqrt(
+        (end_pos_m[0] - start_pos_m[0])**2 +
+        (end_pos_m[1] - start_pos_m[1])**2 +
+        (end_pos_m[2] - start_pos_m[2])**2
+    )
+    if speed_mm_per_min > 0:
+        return distance_m * 1000 / (speed_mm_per_min / 60.0)
+    return 0.0
+
 def stream_gcode_and_move_robot(ser, gcode_filepath):
     """
     Main function to stream G-code, parse commands, and move the robot arm in sync.
     """
-    global current_feed_rate_mm_per_min, last_position_m
+    global current_feed_rate_mm_per_min, last_position_m, previous_elapsed_time
 
     print(f"[INFO] Starting G-code stream: {gcode_filepath}")
     write_to_log(f"[INFO] Starting G-code stream: {gcode_filepath}")
 
     with open(gcode_filepath, 'r') as f:
-        line_count = 0
+        line_count = iter(f.readlines())
         first_printing_instruction = False
-        for line in f:
+        is_skipping_layer = False
+
+        for line in line_count:
             if rospy.is_shutdown():
                 print("[INFO] ROS shutdown detected. Stopping G-code stream.")
                 break
-
-            line_count += 1
+            
             command = line.strip()
 
             if not command:
                 continue # Skip empty lines
 
-            # First printing instruction
             if command.startswith(';'):
-                if 'LAYER:0' in command:
-                    rospy.sleep(10)
-                if not first_printing_instruction and command.startswith(';MESH:'): 
+                # First printing instruction detect
+                if not first_printing_instruction and command.startswith(';LAYER_COUNT:'): 
                         try:
                             mesh_filename = command.split(':', 1)[1].strip()
                             print(f"First object in queue: {mesh_filename}")
@@ -184,9 +214,66 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
                                     print("Invalid input.")
                         except IndexError:
                             rospy.logwarn(f"Could not parse filename on line {line_count}.")
+
+                if command.startswith(';LAYER:'):
+                    try:
+                        current_layer = int(command.split(':')[1])
+
+                        if current_layer ==0:
+                            rospy.loginfo(f"Layer {current_layer}")
+                            rospy.sleep(10)
+
+                        if not assigned_layer(current_layer, ROBOT_NUMBER):
+                            rospy.loginfo(f"Layer {current_layer}. Waiting.")
+                            is_skipping_layer = True
+                        
+                            # Park the arm
+                            start_park_pos = (last_position_m['x'], last_position_m['y'], last_position_m['z'])
+                            park_pos = (PARK_X_M, PARK_Y_M, PARK_Z_M)
+                            time_to_park = calculate_move_time(start_park_pos, park_pos, PARK_SPEED_MM_PER_MIN)
+
+                            rospy.loginfo(f"Moving to park position. Estimated {time_to_park:.2f}s")
+                            move_arm_to_target(park_pos, PARK_PITCH_DEG, int(time_to_park * 1000))
+                            # time.sleep(time_to_park) # Wait for the physical move to complete
+
+                            # Find the duration of the layer we are skipping
+                            layer_duration = 0
+                            for skipped_line in line_count: # Continue consuming lines from the file
+                                if skipped_line.startswith(';TIME_ELAPSED:'):
+                                    current_elapsed_time = float(skipped_line.split(':')[1])
+                                    layer_duration = current_elapsed_time - previous_elapsed_time
+                                    previous_elapsed_time = current_elapsed_time
+                                    rospy.loginfo(f"Detected end of skipped layer. Layer duration: {layer_duration:.2f}s")
+                                    break
+                            
+                            # wait_time = max(0, layer_duration - time_to_park)
+                            wait_time = layer_duration + time_to_park + 2
+                            rospy.loginfo(f"Waiting for {wait_time:.2f}s for other robot to finish.")
+                            if wait_time > 0:
+                                rospy.sleep(wait_time)
+                            
+                            rospy.loginfo("Wait complete. Ready for next assigned layer.")
+
+                        else: # Layer assigned to this robot
+                            rospy.loginfo(f"Layer {current_layer} is for this robot. Proceeding.")
+                            is_skipping_layer = False
+
+                    except (ValueError, IndexError):
+                        rospy.logwarn(f"Could not parse layer number from: {command}")
+
+                elif command.startswith(';TIME_ELAPSED:'):
+                    current_elapsed_time = float(command.split(':')[1])
+                    previous_elapsed_time = current_elapsed_time
+
+                # If skipping, continue to the next line
+                if is_skipping_layer:
+                    continue
+
+            # If skipping, don't process any further
+            if is_skipping_layer:
                 continue
 
-            rospy.loginfo(f"G-code Line {line_count}: {command}")
+            rospy.loginfo(f"G-code {command}")
             write_to_log(f"> {command}")
             ser.write(command.encode() + b'\n')
             ser.write(b'M400\n')
@@ -314,12 +401,9 @@ def main():
         print("No valid G-code file selected. Exiting.")
         return
 
-    # --- Setup external log viewer ---
+
     if os.path.exists(LOG_FILE_PATH):
         os.remove(LOG_FILE_PATH)
-    
-    view_command = f'sh -c "tail -f {LOG_FILE_PATH}; echo \\"---LOGGING ENDED. Press Enter to close.---\\"; read"'
-    log_viewer_process = None
 
     try:
         print(f"Connecting to printer on {SERIAL_PORT} at {BAUDRATE}...")
@@ -327,18 +411,14 @@ def main():
         
         print("Connected. Waking up printer and waiting for ready signal...")
         time.sleep(2) # Wait for printer to initialize after connection
-        ser_global.reset_input_buffer()
-        
-        # Send a blank line to wake up the printer and get an 'ok'
+        ser_global.reset_input_buffer()        
         ser_global.write(b'\n')
         
-        while not rospy.is_shutdown():
-            # response = ser_global.readline().decode('utf-8', errors='ignore').strip()
-            # if response:
-            #     print(f"  Printer Init: {response}")
-            #     write_to_log(f"< {response}")
-            #     print("Marlin is ready.")
-                break
+#        while not rospy.is_shutdown():
+#            response = ser_global.readline().decode('utf-8', errors='ignore').strip()
+#            if 'ok' in response:
+#                print("Marlin is ready.")
+#                break
 
         rospy.loginfo("Moving arm to initial safe position...")
         move_arm_to_target(
