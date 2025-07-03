@@ -33,23 +33,23 @@ DEFAULT_ARM_SPEED_M_PER_S = 0.012
 INTERPOLATION_TIME_STEP_S = 0.1
 
 if ROBOT_NUMBER == 1:
-    X_OFFSET_M = 0.033
-    Y_OFFSET_M = -0.0015
-    Z_OFFSET_M = -0.0016
-else:
-    X_OFFSET_M = 0.03
+    X_OFFSET_M = 0.025
     Y_OFFSET_M = -0.00
-    Z_OFFSET_M = -0.0016
+    Z_OFFSET_M = -0.0014
+else:
+    X_OFFSET_M = 0.025
+    Y_OFFSET_M = -0.00
+    Z_OFFSET_M = -0.0010
 
 PITCH_CONSTRAINT_MIN_DEG = -180.0
 PITCH_CONSTRAINT_MAX_DEG = 0.0
 SERVO_1_POS = 200
 SERVO_2_POS = 500
-PARK_X_M = 0.01
-PARK_Y_M = -0.010
-PARK_Z_M = 0.06
+PARK_X_M = -0.04
+PARK_Y_M = -0.11
+PARK_Z_M = 0.09
 PARK_PITCH_DEG = -180.0
-PARK_SPEED_MM_PER_MIN = 2400.0
+PARK_SPEED_MM_PER_MIN = 3600.0
 
 # -- Logging
 LOG_FILE_PATH = "/tmp/printer_serial.log"
@@ -84,28 +84,33 @@ def parse_gcode_for_move(command):
         if axis == 'F':
             current_feed_rate_mm_per_min = value
             move['f'] = value
+            continue
+
+        # Z is common
         if axis == 'Z':
-            move[axis.lower()] = value / 1000.0 + Z_OFFSET_M
-        
+            move['z'] = value / 1000.0 + Z_OFFSET_M
+            continue
+
+        # X/Y offsets based on robot number
         if ROBOT_NUMBER == 1:
             if axis == 'X':
-                move[axis.lower()] = value / 1000.0 + X_OFFSET_M
-            if axis == 'Y':
-                move[axis.lower()] = value / 1000.0 + Y_OFFSET_M
-        if ROBOT_NUMBER == 2:
-            if first_printing_instruction:
+                move['x'] = value / 1000.0 + X_OFFSET_M
+            elif axis == 'Y':
+                move['y'] = value / 1000.0 + Y_OFFSET_M
+
+        elif ROBOT_NUMBER == 2:
+            if not first_printing_instruction:
                 if axis == 'X':
-                    move[axis.lower()] = - value / 1000.0 + X_OFFSET_M
-                if axis == 'Y':
-                    move[axis.lower()] = - value / 1000.0 + Y_OFFSET_M
+                    move['x'] = value / 1000.0 + X_OFFSET_M
+                elif axis == 'Y':
+                    move['y'] = value / 1000.0 + Y_OFFSET_M
             else:
                 if axis == 'X':
-                    move[axis.lower()] = value / 1000.0 + X_OFFSET_M
-                if axis == 'Y':
-                    move[axis.lower()] = value / 1000.0 + Y_OFFSET_M
+                    move['x'] = -value / 1000.0 + X_OFFSET_M
+                elif axis == 'Y':
+                    move['y'] = -value / 1000.0 + Y_OFFSET_M
 
-        else:
-            move[axis.lower()] = value / 1000.0
+            
     return move
 
 
@@ -153,9 +158,8 @@ def assigned_layer(layer_num, robot_num):
     if robot_num == 1:
         return layer_num % 2 != 0
     elif robot_num == 2:
-        return layer_num == 0 or layer_num % 2 == 0
+        return layer_num % 2 == 0
     else:
-        # Default behavior for any other robot number is to do nothing.
         return False
     
 def calculate_move_time(start_pos_m, end_pos_m, speed_mm_per_min):
@@ -173,7 +177,11 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
     """
     Main function to stream G-code, parse commands, and move the robot arm in sync.
     """
-    global current_feed_rate_mm_per_min, last_position_m, previous_elapsed_time
+    global current_feed_rate_mm_per_min, last_position_m, previous_elapsed_time, time_to_park, layer_start_pos
+
+    previous_elapsed_time = - 2.0
+    time_to_park = 5.0
+    layer_start_pos = (0.0, 0.0, 0.0)
 
     print(f"[INFO] Starting G-code stream: {gcode_filepath}")
     write_to_log(f"[INFO] Starting G-code stream: {gcode_filepath}")
@@ -197,14 +205,12 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
                 # First printing instruction detect
                 if not first_printing_instruction and command.startswith(';LAYER_COUNT:'): 
                         try:
-                            mesh_filename = command.split(':', 1)[1].strip()
-                            print(f"First object in queue: {mesh_filename}")
-
                             while not rospy.is_shutdown():
                                 user_input = input("--> Proceed ? (Y/n): ").lower().strip()
                                 if user_input in ['y', '']: # Default is Yes
                                     print("[INFO] User approved.")
                                     first_printing_instruction= True # Set flag
+                                    rospy.sleep(3.0)
                                     break
                                 elif user_input == 'n':
                                     print("[INFO] User aborted.")
@@ -219,9 +225,9 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
                     try:
                         current_layer = int(command.split(':')[1])
 
-                        if current_layer ==0:
+                        if current_layer == 0:
                             rospy.loginfo(f"Layer {current_layer}")
-                            rospy.sleep(10)
+                            rospy.sleep(3.0)
 
                         if not assigned_layer(current_layer, ROBOT_NUMBER):
                             rospy.loginfo(f"Layer {current_layer}. Waiting.")
@@ -233,21 +239,34 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
                             time_to_park = calculate_move_time(start_park_pos, park_pos, PARK_SPEED_MM_PER_MIN)
 
                             rospy.loginfo(f"Moving to park position. Estimated {time_to_park:.2f}s")
-                            move_arm_to_target(park_pos, PARK_PITCH_DEG, int(time_to_park * 1000))
+                            move_arm_to_target(park_pos, -180, int(time_to_park * 1000))
                             # time.sleep(time_to_park) # Wait for the physical move to complete
 
                             # Find the duration of the layer we are skipping
                             layer_duration = 0
+                            layer_start_pos = (last_position_m['x'], last_position_m['y'], last_position_m['z'])
+
                             for skipped_line in line_count: # Continue consuming lines from the file
-                                if skipped_line.startswith(';TIME_ELAPSED:'):
-                                    current_elapsed_time = float(skipped_line.split(':')[1])
-                                    layer_duration = current_elapsed_time - previous_elapsed_time
-                                    previous_elapsed_time = current_elapsed_time
-                                    rospy.loginfo(f"Detected end of skipped layer. Layer duration: {layer_duration:.2f}s")
-                                    break
+                             # Check if we've reached the end of the layer
+                             if skipped_line.startswith(';TIME_ELAPSED:'):
+                                 current_elapsed_time = float(skipped_line.split(':')[1])
+                                 layer_duration = current_elapsed_time - previous_elapsed_time
+                                 previous_elapsed_time = current_elapsed_time
+                                 rospy.loginfo(f"Detected end of skipped layer. Layer duration: {layer_duration:.2f}s")
+                                 break # End the search for this layer
+
+                             # If it's not the end, try to parse it for a move command
+                             position_update = parse_gcode_for_move(skipped_line)
+                             
+                             if position_update:
+                                 # If an axis isn't in the command, it keeps its previous value.
+                                 new_x = position_update.get('x', layer_start_pos[0])
+                                 new_y = position_update.get('y', layer_start_pos[1])
+                                 new_z = position_update.get('z', layer_start_pos[2])
+                                 layer_start_pos = (new_x, new_y, new_z)
                             
                             # wait_time = max(0, layer_duration - time_to_park)
-                            wait_time = layer_duration + time_to_park + 2
+                            wait_time = layer_duration * 1.2 + time_to_park * 3 + 2.0
                             rospy.loginfo(f"Waiting for {wait_time:.2f}s for other robot to finish.")
                             if wait_time > 0:
                                 rospy.sleep(wait_time)
@@ -255,8 +274,10 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
                             rospy.loginfo("Wait complete. Ready for next assigned layer.")
 
                         else: # Layer assigned to this robot
+                            move_arm_to_target(layer_start_pos, PARK_PITCH_DEG, int(time_to_park * 1000))
                             rospy.loginfo(f"Layer {current_layer} is for this robot. Proceeding.")
                             is_skipping_layer = False
+                            rospy.sleep(time_to_park + 0.2)
 
                     except (ValueError, IndexError):
                         rospy.logwarn(f"Could not parse layer number from: {command}")
@@ -269,91 +290,99 @@ def stream_gcode_and_move_robot(ser, gcode_filepath):
                 if is_skipping_layer:
                     continue
 
+                continue #No further processing for comments
+
             # If skipping, don't process any further
             if is_skipping_layer:
                 continue
 
-            rospy.loginfo(f"G-code {command}")
-            write_to_log(f"> {command}")
-            ser.write(command.encode() + b'\n')
-            ser.write(b'M400\n')
-            ser.write(b'M118 done\n')
+            else: # For actual G-code that needs to be streamed
 
-            move_data = parse_gcode_for_move(command)
+                rospy.loginfo(f"G-code {command}")
+                write_to_log(f"> {command}")
+                ser.write(command.encode() + b'\n')
+                ser.write(b'M400\n')
+                ser.write(b'M118 done\n')
 
-            if move_data:
-                start_pos = (last_position_m['x'], last_position_m['y'], last_position_m['z'])
-                target_x = move_data.get('x', start_pos[0])
-                target_y = move_data.get('y', start_pos[1])
-                target_z = move_data.get('z', start_pos[2])
-                end_pos_m = (target_x, target_y, target_z)
-                # print(end_pos_m)
+                move_data = parse_gcode_for_move(command)
 
-                delta_x = end_pos_m[0] - start_pos[0]
-                delta_y = end_pos_m[1] - start_pos[1]
-                delta_z = end_pos_m[2] - start_pos[2]
-                distance_m = math.sqrt(delta_x**2 + delta_y**2 + delta_z**2)
+                if move_data:
+                    start_pos = (last_position_m['x'], last_position_m['y'], last_position_m['z'])
+                    target_x = move_data.get('x', start_pos[0])
+                    target_y = move_data.get('y', start_pos[1])
+                    target_z = move_data.get('z', start_pos[2])
+                    end_pos_m = (target_x, target_y, target_z)
+                    # print(end_pos_m)
 
-                if distance_m > 1e-6:
-                    feed_rate_m_per_s = (current_feed_rate_mm_per_min / 60) / 1000.0
-                    time_for_segment_s = distance_m / feed_rate_m_per_s
-                    num_interpolation_steps = max(1, int(round(time_for_segment_s / INTERPOLATION_TIME_STEP_S)))
-                    servo_command_duration_ms = int(INTERPOLATION_TIME_STEP_S * 1000)
+                    delta_x = end_pos_m[0] - start_pos[0]
+                    delta_y = end_pos_m[1] - start_pos[1]
+                    delta_z = end_pos_m[2] - start_pos[2]
+                    distance_m = math.sqrt(delta_x**2 + delta_y**2 + delta_z**2)
 
-                    rospy.loginfo(f"Arm Move: Dist: {distance_m*1000:.2f}mm, Speed: {feed_rate_m_per_s*1000:.2f}mm/s, Steps: {num_interpolation_steps}")
+                    if distance_m > 1e-6:
+                        feed_rate_m_per_s = (current_feed_rate_mm_per_min / 60) / 1000.0
+                        time_for_segment_s = distance_m / feed_rate_m_per_s
+                        num_interpolation_steps = max(1, int(round(time_for_segment_s / INTERPOLATION_TIME_STEP_S)))
+                        servo_command_duration_ms = int(INTERPOLATION_TIME_STEP_S * 1000)
 
-                    for step in range(1, num_interpolation_steps + 1):
-                        if rospy.is_shutdown(): break
-                        alpha = float(step) / num_interpolation_steps
-                        interp_x = start_pos[0] + alpha * delta_x
-                        interp_y = start_pos[1] + alpha * delta_y
-                        interp_z = start_pos[2] + alpha * delta_z
-                        move_arm_to_target((interp_x, interp_y, interp_z), last_position_m['pitch'], servo_command_duration_ms)
-                        time.sleep(INTERPOLATION_TIME_STEP_S)
+                        rospy.loginfo(f"Arm Move: Dist: {distance_m*1000:.2f}mm, Speed: {feed_rate_m_per_s*1000:.2f}mm/s, Steps: {num_interpolation_steps}")
+
+                        for step in range(1, num_interpolation_steps + 1):
+                            if rospy.is_shutdown(): break
+                            alpha = float(step) / num_interpolation_steps
+                            interp_x = start_pos[0] + alpha * delta_x
+                            interp_y = start_pos[1] + alpha * delta_y
+                            interp_z = start_pos[2] + alpha * delta_z
+                            move_arm_to_target((interp_x, interp_y, interp_z), last_position_m['pitch'], servo_command_duration_ms)
+                            time.sleep(INTERPOLATION_TIME_STEP_S)
+                    else:
+                        rospy.loginfo("Arm Move: No change in position, skipping.")
+
+                if move_data:
+                    # For G0/G1, we use M400/M118 to wait for the move to physically finish.
+                    while not rospy.is_shutdown():
+                        response = ser.readline().decode('utf-8', errors='ignore').strip()
+                        if response:
+                            if not 'ok' in response:
+                                rospy.loginfo(f"Printer Response: {response}")
+                            write_to_log(f"< {response}")
+                            if 'busy' in response:
+                                rospy.sleep(0.2)
+                        # M118 prints the message directly, so we check for an exact match.
+                        if response == 'done':
+                            break
+                        if 'error' in response.lower():
+                            raise Exception(f"Printer reported an error on line {line_count}")
+
+                if command.strip().startswith(('M109', 'G92')):
+                    while not rospy.is_shutdown():
+                        response = ser.readline().decode('utf-8', errors='ignore').strip()
+                        rospy.sleep(1.04)
+                        if response:
+                            if not 'ok' in response:
+                                rospy.loginfo(f"Printer Response: {response}")
+                            write_to_log(f"< {response}")
+                            if 'busy' in response:
+                                rospy.sleep(0.2)
+                        if response == 'done':
+                            break
+                        if 'error' in response.lower():
+                            raise Exception(f"Printer reported an error on line {line_count}")
+
                 else:
-                     rospy.loginfo("Arm Move: No change in position, skipping.")
-
-            if move_data:
-                # For G0/G1, we use M400/M118 to wait for the move to physically finish.
-                while not rospy.is_shutdown():
-                    response = ser.readline().decode('utf-8', errors='ignore').strip()
-                    if response:
-                        if not 'ok' in response:
-                            rospy.loginfo(f"Printer Response: {response}")
-                        write_to_log(f"< {response}")
-                    # M118 prints the message directly, so we check for an exact match.
-                    if response == 'done':
-                        break
-                    if 'error' in response.lower():
-                        raise Exception(f"Printer reported an error on line {line_count}")
-
-            if command.strip().startswith(('M109', 'G92')):
-                while not rospy.is_shutdown():
-                    response = ser.readline().decode('utf-8', errors='ignore').strip()
-                    rospy.sleep(1.04)
-                    if response:
-                        if not 'ok' in response:
-                            rospy.loginfo(f"Printer Response: {response}")
-                        write_to_log(f"< {response}")
-                    if response == 'done':
-                        break
-                    if 'error' in response.lower():
-                        raise Exception(f"Printer reported an error on line {line_count}")
-
-            else:
-                # For other commands, we just wait for the standard 'ok'.
-                while not rospy.is_shutdown():
-                    response = ser.readline().decode('utf-8', errors='ignore').strip()
-                    if response:
-                        if not 'ok' in response:
-                            rospy.loginfo(f"Printer Response: {response}")
-                        write_to_log(f"< {response}")
-                    if 'busy' in response:
-                        rospy.sleep(0.2)
-                    if 'ok' in response:
-                        break
-                    if 'error' in response.lower():
-                        raise Exception(f"Printer reported an error on line {line_count}")
+                    # For other commands, we just wait for the standard 'ok'.
+                    while not rospy.is_shutdown():
+                        response = ser.readline().decode('utf-8', errors='ignore').strip()
+                        if response:
+                            if not 'ok' in response:
+                                rospy.loginfo(f"Printer Response: {response}")
+                            write_to_log(f"< {response}")
+                        if 'busy' in response:
+                            rospy.sleep(0.2)
+                        if 'ok' in response:
+                            break
+                        if 'error' in response.lower():
+                            raise Exception(f"Printer reported an error on line {line_count}")
 
     print("G-code file streaming complete.")
     write_to_log("--- G-code file streaming complete. ---")
@@ -368,7 +397,7 @@ def stop_arm_movement():
     
     # Safely turn off heater if serial port is available
     if ser_global and ser_global.is_open:
-        rospy.loginfo("Turning off extruder heater (M104 S0)...")
+        rospy.loginfo("Turning off extruder heater...")
         command = "M104 S0"
         ser_global.write(command.encode() + b'\n')
     
@@ -380,7 +409,6 @@ def stop_arm_movement():
     rospy.loginfo("Arm parking sequence initiated.")
     
     if log_viewer_process:
-        rospy.loginfo("Terminating log viewer window...")
         log_viewer_process.terminate()
 
     time.sleep(1.5)
