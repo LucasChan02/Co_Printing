@@ -610,6 +610,7 @@
  */
 // #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 25.714 } //for BMG
 #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 108 } //for single gear
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 802.15}
 
 
 /**
@@ -617,7 +618,7 @@
  * Override with M203
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
-#define DEFAULT_MAX_FEEDRATE          { 300, 300, 50, 15 }
+#define DEFAULT_MAX_FEEDRATE          { 300, 300, 20, 80 }
 
 /**
  * Default Max Acceleration (change/s) change = mm/s
@@ -1257,7 +1258,7 @@
 // Preheat Constants
 #define PREHEAT_1_TEMP_HOTEND 180
 #define PREHEAT_1_TEMP_BED     70
-#define PREHEAT_1_FAN_SPEED     0 // Value from 0 to 255
+#define PREHEAT_1_FAN_SPEED    10 // Value from 0 to 255
 
 #define PREHEAT_2_TEMP_HOTEND 240
 #define PREHEAT_2_TEMP_BED    110
