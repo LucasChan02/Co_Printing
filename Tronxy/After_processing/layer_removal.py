@@ -8,7 +8,6 @@ def filter_odd_layers(input_path: str, output_path: str=None):
 
     A layer block is defined as the lines from a ';MESH:NONMESH' marker
     up to but not including the next ';MESH:NONMESH' or the end code marker '; XY-3 End Code'.
-    The layer number is parsed from a ';LAYER:(\d+)' line within the block.
     """
     # Read all lines
     with open(input_path, 'r') as f:
