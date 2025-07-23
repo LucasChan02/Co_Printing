@@ -18,10 +18,8 @@ class ArmIK:
     servo5Range = (150, 850, 30.0, 210.0)
     servo6Range = (0, 1000, 0.0, 240.0)
 
-    end_effector_link_length = 0.114
-    end_effector_x_offset = 0.02
-    end_effector_length = np.sqrt (end_effector_link_length ** 2 + end_effector_x_offset ** 2)
-
+    #  NO end_effector_x_offset
+    end_effector_length = 0.124
 
     forearm_link_length = 0.094
     upper_arm_length = 0.101
@@ -29,9 +27,8 @@ class ArmIK:
     shouder_height = 0.065
     robot_arm_platform_height = 0.092
 
-    #z_offset = -0.016
     z_offset = 0.0
-    x_clearance = 0.129
+    x_clearance = 0.124
 
     def __init__(self):
         self.setServoRange()
@@ -80,11 +77,11 @@ class ArmIK:
         l_z = - z + self.shouder_height + self.robot_arm_platform_height   # height in vertical plane
 
         # angle of end effector equivalent line to verticle line
-        #end_eff_angle = 0
+        # end_eff_angle = 0
         gamma = (np.pi + pitch_angle)  
 
         l_cg = self.end_effector_length * np.cos(gamma) - l_z
-        l_eg = l_x - self.end_effector_x_offset * np.sin(gamma)
+        l_eg = l_x - self.end_effector_length * np.sin(gamma)
         beta = np.arctan(l_cg / l_eg)
 
         l_ce = np.sqrt(l_cg**2 + l_eg**2)

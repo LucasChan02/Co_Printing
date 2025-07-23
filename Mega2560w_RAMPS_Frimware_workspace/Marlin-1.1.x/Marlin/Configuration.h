@@ -610,8 +610,8 @@
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
 // #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 25.714 } //for BMG
-// #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 108 } //for single gear
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 802.15} // for dual head
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 94.5 } //for single gear
+// #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 802.15} // for dual head
 
 
 /**
