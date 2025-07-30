@@ -1,0 +1,447 @@
+;FLAVOR:Marlin
+;TIME:763
+;Filament used: 0.309811m
+;Layer height: 0.3
+;MINX:105.2
+;MINY:43.96
+;MINZ:0.3
+;MAXX:204.8
+;MAXY:45
+;MAXZ:18
+;TARGET_MACHINE.NAME:Tronxy XY-3
+;Generated with Cura_SteamEngine 5.10.1
+M104 S201
+M105
+M109 S201
+; XY-3 Start Code
+G21 ; Set units to millimeters
+G90 ; Set all axis to Absolute
+M83 ; Set extrusion to Relative
+M107 ; Disable all fans
+M220 S100 ; Set feedrate percentage
+M190 S60 ; Set bed temperature and wait
+G28 ; Home all axis
+; Uncomment the line below to enable ABL Mesh probing
+;G29 ; Probe bed mesh for ABL
+; For best results do not run nozzle heater while performing ABL
+;G1 Z5.0 ; Raise nozzle to prevent scratching of heat bed
+;G1 X0 Y60 ; Move nozzle to Home before heating
+;M109 S201.0 T0 ; Set nozzle temp and wait
+;G92 E0 ; Set Extruder position to zero
+; Uncomment the following lines to enable nozzle purge line along left edge of bed
+G1 Z2.0 F3000 ; Raise Z axis
+G1 X1.1 Y60 Z0.2 F3600.0 ; Move to purge line start position
+G1 Y280 F1500.0 E15 ; Draw first purge line
+G1 X1.4 F3600.0 ; Move to side
+G1 Y60 F1500.0 E10 ; Draw second purge line
+G92 E0 ; Reset Extruder
+G1 Z2.0 F3000 ; Move Z Axis up little to prevent scratching of Heat Bed
+G1 X5 Y60 Z0.2 F3600.0 ; Move over to finish nozzle wipe
+G92 E0
+M82 ;absolute extrusion mode
+M83 ;relative extrusion mode
+G1 F2700 E-5
+;LAYER_COUNT:60
+;LAYER:0
+M107
+M204 S200
+;MESH:Body1
+G0 F3600 X204.8 Y45 Z0.3
+M104 S200
+;TYPE:WALL-OUTER
+G1 F2700 E5
+G1 F600 X105.2 Y45 E4.90944
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z0.9
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:30.039220
+;LAYER:2
+M106 S5.1
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z1.5
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:55.401751
+;LAYER:4
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z2.1
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:80.764282
+;LAYER:6
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z2.7
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:106.126812
+;LAYER:8
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z3.3
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:131.489343
+;LAYER:10
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z3.9
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:156.851874
+;LAYER:12
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z4.5
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:182.214405
+;LAYER:14
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z5.1
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:207.576935
+;LAYER:16
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z5.7
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:232.939466
+;LAYER:18
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z6.3
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:258.301997
+;LAYER:20
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z6.9
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:283.664528
+;LAYER:22
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z7.5
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:309.027058
+;LAYER:24
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z8.1
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:334.389589
+;LAYER:26
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z8.7
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:359.752120
+;LAYER:28
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z9.3
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:385.114651
+;LAYER:30
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z9.9
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:410.477182
+;LAYER:32
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z10.5
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:435.839712
+;LAYER:34
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z11.1
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:461.202243
+;LAYER:36
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z11.7
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:486.564774
+;LAYER:38
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z12.3
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:511.927305
+;LAYER:40
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z12.9
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:537.289835
+;LAYER:42
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z13.5
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:562.652366
+;LAYER:44
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z14.1
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:588.014897
+;LAYER:46
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z14.7
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:613.377428
+;LAYER:48
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z15.3
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:638.739958
+;LAYER:50
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z15.9
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:664.102489
+;LAYER:52
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z16.5
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:689.465020
+;LAYER:54
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z17.1
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:714.827551
+;LAYER:56
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+;MESH:NONMESH
+G0 F300 X105.2 Y45 Z17.7
+G0 F3600 X105.2 Y43.96
+G0 X204.8 Y43.96
+G0 X204.8 Y45
+;TIME_ELAPSED:740.190081
+;LAYER:58
+;TYPE:WALL-OUTER
+;MESH:Body1
+G1 F2700 E5
+G1 F600 X105.2 Y45 E5.16783
+G1 F2700 E-5
+; XY-3 End Code
+M83 ; Set extrder to Relative
+G1 E-5 F3000 ; Retract 5mm of filament at 50mm/s
+G90 ; Set all axis to Absolute
+G1 X0 Y300 ; Park print head
+G1 Z10 ; Move up 10mm
+M106 S0 ; Set fan speed to 0
+;M104 S0 ; Set Nozzle temp to 0
+M140 S0 ; Set Bed temp to 0
+M84 ; Disable all stepper motors
+M82 ;absolute extrusion mode
+M104 S0
+;End of Gcode
+;SETTING_3 {"global_quality": "[general]\\nversion = 4\\nname = Alter_layer_0.3\
+;SETTING_3 \ndefinition = tronxy_xy3\\n\\n[metadata]\\ntype = quality_changes\\n
+;SETTING_3 quality_type = normal\\nsetting_version = 25\\n\\n[values]\\naccelera
+;SETTING_3 tion_enabled = True\\nacceleration_travel_enabled = False\\nadhesion_
+;SETTING_3 type = none\\njerk_enabled = False\\nlayer_height = 0.3\\nlayer_heigh
+;SETTING_3 t_0 = 0.3\\nmaterial_bed_temperature = 60\\nrelative_extrusion = True
+;SETTING_3 \\nretraction_combing = no_outer_surfaces\\nspeed_slowdown_layers = 0
+;SETTING_3 \\nsupport_enable = False\\nsupport_structure = tree\\nsupport_type =
+;SETTING_3  buildplate\\ntravel_retract_before_outer_wall = False\\n\\n", "extru
+;SETTING_3 der_quality": ["[general]\\nversion = 4\\nname = Alter_layer_0.3\\nde
+;SETTING_3 finition = tronxy_xy3\\n\\n[metadata]\\ntype = quality_changes\\nqual
+;SETTING_3 ity_type = normal\\nintent_category = default\\nposition = 0\\nsettin
+;SETTING_3 g_version = 25\\n\\n[values]\\nacceleration_print = 200\\nacceleratio
+;SETTING_3 n_travel = 1000\\nbrim_gap = 0.2\\nbrim_width = 4\\ncool_fan_speed = 
+;SETTING_3 2\\ninfill_material_flow = 108\\ninfill_pattern = cubicsubdiv\\ninfil
+;SETTING_3 l_wipe_dist = 0.04\\nmaterial_final_print_temperature = 201\\nmateria
+;SETTING_3 l_flow = 104.0\\nmaterial_flow_layer_0 = 95.0\\nmaterial_initial_prin
+;SETTING_3 t_temperature = =material_print_temperature\\nmaterial_print_temperat
+;SETTING_3 ure = =default_material_print_temperature\\nmaterial_print_temperatur
+;SETTING_3 e_layer_0 = 201.0\\nretract_at_layer_change = False\\nretraction_amou
+;SETTING_3 nt = 5\\nretraction_hop = 0.6\\nretraction_hop_enabled = False\\nskin
+;SETTING_3 _material_flow = 100.0\\nskirt_brim_material_flow = 92\\nskirt_brim_s
+;SETTING_3 peed = 10\\nspeed_infill = =speed_print\\nspeed_print = 10\\nspeed_to
+;SETTING_3 pbottom = 10\\nspeed_travel = 60\\nspeed_wall = 10\\nspeed_wall_x = =
+;SETTING_3 speed_wall\\nsupport_angle = 60\\nsupport_material_flow = 92.0\\nsupp
+;SETTING_3 ort_xy_distance = 0.6\\ntop_bottom_thickness = 1.4\\ntop_layers = =0 
+;SETTING_3 if infill_sparse_density == 100 else math.ceil(round(top_thickness / 
+;SETTING_3 resolveOrValue('layer_height'), 4))\\ntop_thickness = =top_bottom_thi
+;SETTING_3 ckness\\ntravel_avoid_distance = 0.8\\ntravel_avoid_other_parts = Tru
+;SETTING_3 e\\nwall_0_wipe_dist = 0.05\\nwall_line_count = 5\\nwall_x_material_f
+;SETTING_3 low = 105.0\\n\\n"]}
