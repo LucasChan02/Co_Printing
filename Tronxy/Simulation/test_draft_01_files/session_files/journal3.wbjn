@@ -1,0 +1,68 @@
+# encoding: utf-8
+# 2025 R2
+SetScriptVersion(Version="25.2.170")
+system1 = GetSystem(Name="ENGD")
+engineeringData1 = system1.GetContainer(ComponentName="Engineering Data")
+material1 = engineeringData1.GetMaterial(Name="Polylactic Acid (PLA) Biopolymer")
+matlProp1 = material1.CreateProperty(
+    Name="Density",
+    Qualifiers={"Definition": "", "Behavior": ""})
+matlProp1.SetData(
+    Index=-1,
+    Variables=["Density"],
+    Values=[["1240 [kg m^-3]"]])
+matlProp2 = material1.CreateProperty(
+    Name="Specific Heat",
+    Definition="Constant Pressure",
+    Qualifiers={"Definition": "Constant Pressure", "Behavior": ""})
+matlProp3 = material1.CreateProperty(
+    Name="Specific Heat",
+    Definition="Constant Volume",
+    Qualifiers={"Definition": "Constant Volume", "Behavior": ""})
+matlProp3.SetData(
+    SheetName="Specific Heat",
+    SheetQualifiers={"Definition": "Constant Pressure", "Behavior": ""},
+    Index=-1,
+    Variables=["Specific Heat"],
+    Values=[["1800 [J kg^-1 C^-1]"]])
+matlProp3.SetData(
+    SheetName="Specific Heat",
+    SheetQualifiers={"Definition": "Constant Volume", "Behavior": ""},
+    Index=-1,
+    Variables=["Specific Heat"],
+    Values=[["1800 [J kg^-1 C^-1]"]])
+Save(Overwrite=True)
+EngData.EnableFilter(Enable=False)
+EngData.EnableFilter()
+EngData.EnableFilter(Enable=False)
+EngData.EnableFilter()
+matlProp4 = material1.CreateProperty(
+    Name="Thermal Conductivity",
+    Behavior="Orthotropic",
+    Qualifiers={"Definition": "", "Behavior": "Orthotropic"})
+matlProp4.SetVariableProperty(
+    VariableName="Thermal Conductivity X direction",
+    Property="Unit",
+    Value="W m^-1 K^-1")
+matlProp4.SetVariableProperty(
+    VariableName="Thermal Conductivity Y direction",
+    Property="Unit",
+    Value="W m^-1 K^-1")
+matlProp4.SetVariableProperty(
+    VariableName="Thermal Conductivity Z direction",
+    Property="Unit",
+    Value="W m^-1 K^-1")
+matlProp4.SetData(
+    Index=-1,
+    Variables=["Thermal Conductivity X direction"],
+    Values=[["0.25 [W m^-1 K^-1]"]])
+matlProp4.SetData(
+    Variables=["Thermal Conductivity Y direction"],
+    Values=[["0.28 [W m^-1 K^-1]"]])
+matlProp4.SetData(
+    Variables=["Thermal Conductivity Y direction"],
+    Values=[["0.18 [W m^-1 K^-1]"]])
+matlProp4.SetData(
+    Variables=["Thermal Conductivity Z direction"],
+    Values=[["0.15 [W m^-1 K^-1]"]])
+Save(Overwrite=True)

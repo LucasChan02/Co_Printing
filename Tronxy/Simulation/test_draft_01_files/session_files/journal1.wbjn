@@ -1,0 +1,41 @@
+# encoding: utf-8
+# 2025 R2
+SetScriptVersion(Version="25.2.170")
+template1 = GetTemplate(TemplateName="Mechanical Model")
+system1 = template1.CreateSystem()
+template2 = GetTemplate(TemplateName="Material Designer")
+system2 = template2.CreateSystem(
+    Position="Right",
+    RelativeTo=system1)
+favorites1 = EngData.LoadFavoriteItems()
+library1 = EngData.OpenLibrary(
+    Name="Additive Manufacturing Materials",
+    Source="Additive_Manufacturing_Materials.xml")
+library2 = EngData.OpenLibrary(
+    Name="Geomechanical Materials",
+    Source="GeoMechanical_Materials.xml")
+library3 = EngData.OpenLibrary(
+    Name="Composite Materials",
+    Source="Composite_Materials.xml")
+library4 = EngData.OpenLibrary(
+    Name="General Non-linear Materials",
+    Source="General Materials Non-linear.xml")
+library5 = EngData.OpenLibrary(
+    Name="Thermal Materials",
+    Source="Thermal_Materials.xml")
+library6 = EngData.OpenLibrary(
+    Name="ANSYS GRANTA Materials Data for Simulation (Sample)",
+    Source="Granta_Design_Typical_Materials.xml")
+library7 = EngData.OpenLibrary(
+    Name="General Materials",
+    Source="General_Materials.xml")
+library8 = EngData.OpenLibrary(
+    Name="Explicit Materials",
+    Source="Explicit_Materials.xml")
+EngData.EnableFilter(Enable=False)
+EngData.EnableFilter()
+library9 = EngData.OpenLibrary(
+    Name="General_Materials",
+    Source=ANSYS::Disk::General_Materials.xml)
+system2.Refresh()
+Save(Overwrite=True)

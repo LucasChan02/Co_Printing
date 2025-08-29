@@ -1,0 +1,93 @@
+# encoding: utf-8
+# 2025 R2
+SetScriptVersion(Version="25.2.170")
+template1 = GetTemplate(TemplateName="External Data")
+system1 = GetSystem(Name="SYS")
+system2 = template1.CreateSystem(
+    Position="Left",
+    RelativeTo=system1)
+setup1 = system2.GetContainer(ComponentName="Setup")
+externalLoadFileData1 = setup1.AddDataFile(FilePath="C:/Users/Lucas/Downloads/datasheet.iqy")
+externalLoadData1 = setup1.GetExternalLoadData()
+externalLoadData1.DeleteFileData(FileData=externalLoadFileData1)
+system2.Delete()
+template2 = GetTemplate(TemplateName="EngData")
+system3 = template2.CreateSystem(
+    Position="Left",
+    RelativeTo=system1)
+engineeringData1 = system3.GetContainer(ComponentName="Engineering Data")
+matl1 = engineeringData1.CreateMaterial(Name="Polylactic Acid (PLA) Biopolymer")
+material1 = engineeringData1.GetMaterial(Name="Structural Steel")
+material1.Delete()
+matl1.SetColor(
+    Red=85,
+    Green=191,
+    Blue=193)
+matlProp1 = matl1.CreateProperty(
+    Name="Elasticity",
+    Behavior="Orthotropic",
+    Qualifiers={"Definition": "", "Behavior": "Orthotropic"})
+matlProp1.Delete(Behavior="Orthotropic")
+matlProp2 = matl1.CreateProperty(
+    Name="Elasticity",
+    Behavior="Orthotropic",
+    Qualifiers={"Definition": "", "Behavior": "Orthotropic"})
+Save(Overwrite=True)
+matlProp2.SetVariableProperty(
+    VariableName="Young's Modulus X direction",
+    Property="Unit",
+    Value="MPa")
+matlProp2.SetData(
+    Index=-1,
+    Variables=["Young's Modulus X direction"],
+    Values=[["2700 [MPa]"]])
+matlProp2.SetData(
+    Variables=["Young's Modulus Y direction"],
+    Values=[["2600 [Pa]"]])
+matlProp2.SetData(
+    Variables=["Young's Modulus Y direction"],
+    Values=[["2700 [Pa]"]])
+matlProp2.SetData(
+    Variables=["Young's Modulus Z direction"],
+    Values=[["2200 [Pa]"]])
+matlProp2.SetVariableProperty(
+    VariableName="Young's Modulus Y direction",
+    Property="Unit",
+    Value="MPa")
+matlProp2.SetData(
+    Variables=["Young's Modulus Y direction"],
+    Values=[["0.0026999999999999997 [MPa]"]])
+matlProp2.SetVariableProperty(
+    VariableName="Young's Modulus Z direction",
+    Property="Unit",
+    Value="MPa")
+matlProp2.SetData(
+    Variables=["Young's Modulus Z direction"],
+    Values=[["0.0021999999999999997 [MPa]"]])
+matlProp2.SetData(
+    Variables=["Young's Modulus Y direction"],
+    Values=[["2700 [MPa]"]])
+matlProp2.SetData(
+    Variables=["Young's Modulus Z direction"],
+    Values=[["2200 [MPa]"]])
+matlProp2.SetData(
+    Variables=["Poisson's Ratio XY"],
+    Values=[["0.43"]])
+matlProp2.SetData(
+    Variables=["Poisson's Ratio YZ"],
+    Values=[["0.38"]])
+matlProp2.SetData(
+    Variables=["Poisson's Ratio XZ"],
+    Values=[["0.35"]])
+Save(Overwrite=True)
+matlProp3 = matl1.CreateProperty(
+    Name="Density",
+    Qualifiers={"Definition": "", "Behavior": ""})
+matlProp4 = matl1.CreateProperty(
+    Name="Specific Heat",
+    Definition="Constant Pressure",
+    Qualifiers={"Definition": "Constant Pressure", "Behavior": ""})
+matlProp5 = matl1.CreateProperty(
+    Name="Thermal Conductivity",
+    Behavior="Orthotropic",
+    Qualifiers={"Definition": "", "Behavior": "Orthotropic"})
