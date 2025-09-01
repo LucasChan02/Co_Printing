@@ -1,3 +1,0 @@
-Lucas
-IP-5-FLEX 
-29 August 2025  17:26:35
