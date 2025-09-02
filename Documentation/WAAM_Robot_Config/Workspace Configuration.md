@@ -20,6 +20,8 @@ The theoretical working range is significantly altered when a tool is mounted. F
 
 ![](resources/{4606D3CE-2A64-41D5-8E52-62C5D4A7949A}.png)
 
+The working envelope is significantly affected by the tool geometry and may vary if the tool holder we are getting has different angle and offset.
+
 #### PSF 25 Tool Properties
 
 The tool's geometry is defined by its translation and rotation relative to the robot's tool flange.
@@ -165,6 +167,8 @@ This configuration creates a large, shared work area, both robots can access the
 
 ![](resources/{B7189F9B-B0D6-44DB-A4E7-65F5A5074994}.png)
 
+![](resources/{7469035E-4178-433E-BAF7-F9A47D63DFAD}.png)
+
 ![](Installation_Plan-Layout1.pdf)
 
 
@@ -176,5 +180,7 @@ One major constraint of this layout is the fact that it limits the approach angl
 
 A more simpler approach would be just limit these two robots in their own half of the workspace and never allow them to cross the centre line. Obviously that will have a negative impact on the flexibility of task assignment and motion planning if one robot can only print in 1/2 of total build volume, but this disadvantage can be partially offset by the introduction of the rotary stage. The AM powerpac add-in can add the rotary stage as an additional axis and include it as part of motion control.
 ![](resources/{027ED996-497E-4702-B4C2-7C01F88031D9}.png)
+
+![](resources/{438878AB-8B6B-4F2E-AB26-EFC72EE5EDF0}.png)
 
 ![](Installation_Plan-Layout2.pdf)
