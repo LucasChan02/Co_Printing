@@ -75,12 +75,16 @@ The IRB 1200 is powered by [IRC5 controllers](https://new.abb.com/products/robo
 | Gross weight                         | 2kg                               |
 | Eccentricity                         | 10μm                              |
 | Lost movement                        | 0.005° = 18"                      |
+
 [Link 1](https://www.ebay.com/itm/396907729776?_trksid=p4481478.c101506.m1851)
-![|400](https://i.ebayimg.com/images/g/bQAAAOSwXWZoW9S5/s-l1600.jpg)
+
+![|300](https://i.ebayimg.com/images/g/bQAAAOSwXWZoW9S5/s-l1600.jpg)
 
 [Link 2](https://www.ebay.com/itm/317074078087)
-![|400](https://i.ebayimg.com/images/g/yV8AAOSwDmBevjAM/s-l1600.jpg)
+
+![|300](https://i.ebayimg.com/images/g/yV8AAOSwDmBevjAM/s-l1600.jpg)
 
 
 [Link 3](https://www.ebay.com/itm/277231135965)
-![|400](https://i.ebayimg.com/images/g/BP0AAOSwDYNnyoES/s-l1600.png)
+
+![|300](https://i.ebayimg.com/images/g/BP0AAOSwDYNnyoES/s-l1600.png)

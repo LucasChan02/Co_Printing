@@ -1,4 +1,7 @@
+![](resources/{D28D4BDC-53B3-4B17-AA2C-7CC9B04EFABA}.png)
 
+
+---
 
 ## Welding Screen (PVC curtains with frame)
 

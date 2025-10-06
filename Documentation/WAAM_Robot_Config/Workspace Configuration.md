@@ -184,3 +184,44 @@ A more simpler approach would be just limit these two robots in their own half o
 ![](resources/{438878AB-8B6B-4F2E-AB26-EFC72EE5EDF0}.png)
 
 ![](Installation_Plan-Layout2.pdf)
+
+
+---
+
+
+## Loads on foundation, robot
+
+The illustration shows the directions of the robots stress forces.  
+The directions are valid for all floor mounted, suspended and inverted robots.
+
+![|250](resources/Pasted%20image%2020250923125811.png)
+
+#### Suspended Mounting
+
+|Force|Endurance load (in operation)|Max. load (emergency stop)|
+|---|---|---|
+|**Force xy**|±910 N|±1620 N|
+|**Force z**|+550 ±980 N|+550 ±1610 N|
+|**Torque xy**|±570 Nm|±1550 Nm|
+|**Torque z**|±280 Nm|±580 Nm|
+
+## Requirements, foundation
+
+The table shows the requirements for the foundation where the weight of the installed robot is included:
+
+| Requirement | Value | Note |
+| :--- | :--- | :--- |
+| **Flatness of foundation surface** | 0.1/500 mm | Flat foundations give better repeatability of the resolver calibration compared to original settings on delivery from ABB.<br><br>The value for levelness aims at the circumstance of the anchoring points in the robot base.<br><br>In order to compensate for an uneven surface, the robot can be recalibrated during installation. If resolver/encoder calibration is changed this will influence the absolute accuracy. |
+| **Minimum resonance frequency** | 22 Hz | The value is recommended for optimal performance.<br><br>> **Note**<br>> It may affect the manipulator life-time to have a lower resonance frequency than recommended.<br><br>Due to foundation stiffness, consider robot mass including equipment. ⁱ<br><br>For information about compensating for foundation flexibility, see the application manual of the controller software, section *Motion Process Mode*. |
+| **Minimum foundation material yield strength** | 150 MPa | |
+
+---
+ⁱ The minimum resonance frequency given should be interpreted as the frequency of the robot mass/inertia, robot assumed stiff, when a foundation translational/torsional elasticity is added, i.e. the stiffness of the pedestal where the robot is mounted. The minimum resonance frequency should not be interpreted as the resonance frequency of the building, floor etc. For example, if the equivalent mass of the floor is very high, it will not affect robot movement, even if the frequency is well below the stated frequency. The robot should be mounted as rigid as possible to the floor.
+
+Disturbances from other machinery will affect the robot and the tool accuracy. The robot has resonance frequencies in the region 10 – 20 Hz and disturbances in this region will be amplified, although somewhat damped by the servo control. This might be a problem, depending on the requirements from the applications. If this is a problem, the robot needs to be isolated from the environment.
+
+
+
+Welding table adapter
+
+![|400](https://www.otto-kind.de/wp-content/uploads/2024/12/oki-m4fhdr-cobot-adapter.jpg)
