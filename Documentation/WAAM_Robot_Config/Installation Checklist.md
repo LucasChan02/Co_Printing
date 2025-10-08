@@ -76,13 +76,21 @@ Model # DMSHJPF6X6YCSUE9VV0-0731
 
 ## Duct Fan
 
-The air exhaust system in Lab 151 has independent ducts for both the fume hoods that can handle ~80 fpm (from visual inspection we assume the flow meters have 8 inch diameters)  which is roughly 28 cfm. There is another stack duct with the same 8 inch regulator that takes the room air from four different spots, one of which is being occupied by the aerosol machine. 
+The air exhaust system in Lab 151 has independent ducts for both fume hoods, each capable of approximately 80 feet per minute (fpm). The flow meters have 8-inch diameter openings, which corresponds to a flow rate of roughly **28 cubic feet per minute (cfm)** per duct.
 
-If we simplify the case by assuming each of these four exhaust openings is equally taking 7 cfm, the flow rate at the 6 inch opening would be 35.65 feet per minute, which is not capable for welding fume extraction. 
+In addition, there is another stack duct with the same 8-inch regulator that collects room air from four separate locations, one of which serves the aerosol machine.
 
-A typical 6" fume capture arm on the market usually provides >300 cfm flow rate to create a 5 feet capture zone, according to the product specifications published by Miller Electric Mfg. LLC.
+Assuming each of the four exhaust openings draws an equal flow of 7 cfm, the velocity at a 6-inch diameter opening can be calculated as follows:
 
-Thus, we should include an inline booster fan in our exhaust duct design to ensure sufficient flow rate.
+$$
+\text{Velocity (fpm)} = \frac{Q}{A} = \frac{7\ \text{cfm}}{0.196\ \text{ft}^2} \approx 35.65\ \text{fpm}
+$$
+
+This velocity (**≈36 fpm**) is **insufficient for welding fume extraction**.
+
+A typical 6-inch fume capture arm on the market provides a flow rate of 300 cfm, achieving a 5-foot effective capture zone, according to specifications from *Miller Electric Mfg. LLC.*
+
+To ensure adequate flow rate and effective fume capture, an inline booster fan should be incorporated into the exhaust duct design.
 
 ### Option 1. Suncourt Inductor 6 in. Corded In-Line Duct Fan
 
