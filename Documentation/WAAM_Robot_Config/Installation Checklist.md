@@ -1,3 +1,29 @@
+## Loads on foundation, robot
+
+The illustration shows the directions of the robots stress forces.  
+The directions are valid for all floor mounted, suspended and inverted robots.
+
+![|250](resources/Pasted%20image%2020250923125811.png)
+
+#### Suspended Mounting
+
+|Force|Endurance load (in operation)|Max. load (emergency stop)|
+|---|---|---|
+|**Force xy**|±910 N|±1620 N|
+|**Force z**|+550 ±980 N|+550 ±1610 N|
+|**Torque xy**|±570 Nm|±1550 Nm|
+|**Torque z**|±280 Nm|±580 Nm|
+
+## Requirements, foundation
+
+The table shows the requirements for the foundation where the weight of the installed robot is included:
+
+| Requirement                                    | Value      | Note                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| :--------------------------------------------- | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Flatness of foundation surface**             | 0.1/500 mm | Flat foundations give better repeatability of the resolver calibration compared to original settings on delivery from ABB.<br><br>The value for levelness aims at the circumstance of the anchoring points in the robot base.<br><br>In order to compensate for an uneven surface, the robot can be recalibrated during installation. If resolver/encoder calibration is changed this will influence the absolute accuracy. |
+| **Minimum resonance frequency**                | 22 Hz      | The value is recommended for optimal performance.<br><br>> **Note**<br>> It may affect the manipulator life-time to have a lower resonance frequency than recommended.<br><br>Due to foundation stiffness, consider robot mass including equipment. ⁱ<br><br>For information about compensating for foundation flexibility, see the application manual of the controller software, section *Motion Process Mode*.           |
+| **Minimum foundation material yield strength** | 150 MPa    |                                                                                                                                                                                                                                                                                                                                                                                                                             |
+
 ![](resources/{D28D4BDC-53B3-4B17-AA2C-7CC9B04EFABA}.png)
 
 
@@ -305,43 +331,72 @@ Store SKU # 148733
 
 ---
 
-## Rotary Table for Build Plate
+## Fixture / Clamping
 
-#### Generic unbranded HT03RA100
+### 4 in. Flat Drill Press Vise
 
-~ 340 USD
+[HomeDepot Link](https://www.homedepot.com/p/OLYMPIA-4-in-Flat-Drill-Press-Vise-38-714/205149978)
 
-| Product model                        | HT03RA100                         |
-| ------------------------------------ | --------------------------------- |
-| Table size                           | Φ100mm                            |
-| Load                                 | 45kg                              |
-| Itinerary                            | 360°                              |
-| Packing size                         | 23×13×16 cm                       |
-| Parallelization                      | 80μm                              |
-| Resolution / Pulse (no subdivision)  | 0.01°                             |
-| Resolution / Pulse (20 subdivisions) | 0.0005°                           |
-| Recoil                               | 0.005° = 18"                      |
-| Material                             | Aluminum - black anodized         |
-| Top board beat                       | 15μm                              |
-| Transmission mode                    | Worm gear (reduction ratio 1/180) |
-| Weight                               | 1.7kg                             |
-| Guide rail                           | Bearing                           |
-| Absolute on-axis accuracy            | 0.01° = 36"                       |
-| Repeatability                        | 0.005° = 18"                      |
-| Rotation speed (maximum)             | 25° / sec                         |
-| Gross weight                         | 2kg                               |
-| Eccentricity                         | 10μm                              |
-| Lost movement                        | 0.005° = 18"                      |
+#### 28.79 USD
 
-[Link 1](https://www.ebay.com/itm/396907729776?_trksid=p4481478.c101506.m1851)
+![Pic|300](https://images.thdstatic.com/productImages/f0b6c0d3-705e-45ff-8bf7-fd719168af6a/svn/olympia-vises-38-714-64_600.jpg)
 
-![|300](https://i.ebayimg.com/images/g/bQAAAOSwXWZoW9S5/s-l1600.jpg)
+- Hardened steel replaceable 4 in. wide jaw faces
+- Malleable cast steel body with powder coat finish
+- 4 hole reinforced base for fast, easy machine table adjustment
+- Ideal for drilling, tapping, grinding, reaming, milling and other machine operations
+- Machined spindle for smooth operation
 
-[Link 2](https://www.ebay.com/itm/317074078087)
+#### Product specification
 
-![|300](https://i.ebayimg.com/images/g/yV8AAOSwDmBevjAM/s-l1600.jpg)
+Internet # 205149978
+
+Model # 38-714
+
+| Dimensions              |            |
+| ----------------------- | ---------- |
+| Jaw Width (in.)         | 4 in       |
+| Throat Depth (in.)      | 1 in       |
+| Clamping Strength (lb.) | 30000      |
+| Hand Tool Type          | Vise       |
+| Individual/Set          | Individual |
+| Jaw Capacity (in.)      | 4.5        |
+| Material                | Steel      |
+| Returnable              | 90-Day     |
+| Tools Product Type      | Power Tool |
 
 
-[Link 3](https://www.ebay.com/itm/277231135965)
+### 4 in. Light Duty Drill Press Vise
 
-![|300](https://i.ebayimg.com/images/g/BP0AAOSwDYNnyoES/s-l1600.png)
+[HomeDepot Link](https://www.homedepot.com/p/Yost-4-in-Light-Duty-Drill-Press-Vise-LDPV-4/306059507)
+
+#### 21.59 USD
+
+![Pic|300](https://images.thdstatic.com/productImages/1470dee6-4927-468b-9500-6297e4aff536/svn/yost-vises-ldpv-4-64_600.jpg)
+
+- Lightweight and portable design for easy installation
+- Cast iron construction ensures durability
+- Textured jaws provide a secure grip
+- Features a slotted base for easy installation and positioning
+- 1,000 lbs. clamping pressure
+
+#### Product specification
+
+Internet # 306059507
+
+Model # LDPV-4
+
+| Dimensions | |
+| --- | --- |
+| Jaw Width (in.) | 4 in |
+| Throat Depth (in.) | 0.85 in |
+| Clamping Strength (lb.) | 1000 |
+| Duty Rating | Light |
+| Hand Tool Type | Vise |
+| Individual/Set | Individual |
+| Jaw Capacity (in.) | 4 in |
+| Material | Cast Iron |
+| Returnable | 90-Day |
+| Swivel base | No |
+| Tools Product Type | Hand Tool |
+| Vise Type | Bench |

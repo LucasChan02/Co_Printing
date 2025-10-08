@@ -209,11 +209,11 @@ The directions are valid for all floor mounted, suspended and inverted robots.
 
 The table shows the requirements for the foundation where the weight of the installed robot is included:
 
-| Requirement | Value | Note |
-| :--- | :--- | :--- |
-| **Flatness of foundation surface** | 0.1/500 mm | Flat foundations give better repeatability of the resolver calibration compared to original settings on delivery from ABB.<br><br>The value for levelness aims at the circumstance of the anchoring points in the robot base.<br><br>In order to compensate for an uneven surface, the robot can be recalibrated during installation. If resolver/encoder calibration is changed this will influence the absolute accuracy. |
-| **Minimum resonance frequency** | 22 Hz | The value is recommended for optimal performance.<br><br>> **Note**<br>> It may affect the manipulator life-time to have a lower resonance frequency than recommended.<br><br>Due to foundation stiffness, consider robot mass including equipment. ⁱ<br><br>For information about compensating for foundation flexibility, see the application manual of the controller software, section *Motion Process Mode*. |
-| **Minimum foundation material yield strength** | 150 MPa | |
+| Requirement                                    | Value      | Note                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| :--------------------------------------------- | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Flatness of foundation surface**             | 0.1/500 mm | Flat foundations give better repeatability of the resolver calibration compared to original settings on delivery from ABB.<br><br>The value for levelness aims at the circumstance of the anchoring points in the robot base.<br><br>In order to compensate for an uneven surface, the robot can be recalibrated during installation. If resolver/encoder calibration is changed this will influence the absolute accuracy. |
+| **Minimum resonance frequency**                | 22 Hz      | The value is recommended for optimal performance.<br><br>> **Note**<br>> It may affect the manipulator life-time to have a lower resonance frequency than recommended.<br><br>Due to foundation stiffness, consider robot mass including equipment. ⁱ<br><br>For information about compensating for foundation flexibility, see the application manual of the controller software, section *Motion Process Mode*.           |
+| **Minimum foundation material yield strength** | 150 MPa    |                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 ---
 ⁱ The minimum resonance frequency given should be interpreted as the frequency of the robot mass/inertia, robot assumed stiff, when a foundation translational/torsional elasticity is added, i.e. the stiffness of the pedestal where the robot is mounted. The minimum resonance frequency should not be interpreted as the resonance frequency of the building, floor etc. For example, if the equivalent mass of the floor is very high, it will not affect robot movement, even if the frequency is well below the stated frequency. The robot should be mounted as rigid as possible to the floor.
@@ -225,3 +225,11 @@ Disturbances from other machinery will affect the robot and the tool accuracy. T
 Welding table adapter
 
 ![|400](https://www.otto-kind.de/wp-content/uploads/2024/12/oki-m4fhdr-cobot-adapter.jpg)
+
+
+
+
+---
+
+![](resources/{35FC3D6A-3BE0-4913-9C9E-9503910871EB}.png)
+C. Two single cabinets
