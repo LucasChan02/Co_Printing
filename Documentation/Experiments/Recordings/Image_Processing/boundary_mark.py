@@ -2,35 +2,32 @@ import cv2
 import numpy as np
 import os
 import csv
+# from typing import Tuple
 
 
 def boundary_mark(
-    image_dir,
-    output_dir,
-    csv_path,
-    approx_epsilon_factor=0.0035,
-    min_segment_len=60,
-    max_segment_len=600,
-    pixel_to_micron=1.13636,
-    hsv_lower_thresh=(40, 40, 40),
-    hsv_upper_thresh=(70, 255, 255),
-    morph_kernel_size=(5, 5),
-):
-    """
-    Processes all images in a directory to detect contours, filter them by segment length,
-    and save the results.
-
-    Args:
-        image_dir (str): Path to the directory containing images to process.
-        output_dir (str): Path to the directory where processed images will be saved.
-        csv_path (str): Path to the CSV file to save segment length data.
-        approx_epsilon_factor (float): Factor for approximating contour shape.
-        min_segment_len (int): Minimum length of a contour segment to be approved.
-        max_segment_len (int): Maximum length of a contour segment to be approved.
-        pixel_to_micron (float): Conversion factor from pixels to microns.
-        hsv_lower_thresh (tuple): Lower bound for the HSV color mask.
-        hsv_upper_thresh (tuple): Upper bound for the HSV color mask.
-        morph_kernel_size (tuple): Kernel size for morphological closing.
+    image_dir: str,
+    output_dir: str,
+    csv_path: str,
+    approx_epsilon_factor: float = 0.0035,
+    min_segment_len: int = 60,
+    max_segment_len: int = 600,
+    pixel_to_micron: float = 1.13636,
+    hsv_lower_thresh: tuple[int, int, int] = (40, 40, 40),
+    hsv_upper_thresh: tuple[int, int, int] = (70, 255, 255),
+    morph_kernel_size: tuple[int, int] = (5, 5),
+) -> None:
+    """Args:
+    image_dir (str): Path to the directory containing images to process.
+    output_dir (str): Path to the directory where processed images will be saved.
+    csv_path (str): Path to the CSV file to save segment length data.
+    approx_epsilon_factor (float): Factor for approximating contour shape.
+    min_segment_len (int): Minimum length of a contour segment to be approved.
+    max_segment_len (int): Maximum length of a contour segment to be approved.
+    pixel_to_micron (float): Conversion factor from pixels to microns.
+    hsv_lower_thresh (tuple): Lower bound for the HSV color mask.
+    hsv_upper_thresh (tuple): Upper bound for the HSV color mask.
+    morph_kernel_size (tuple): Kernel size for morphological closing.
     """
     # Create output directory if it doesn't exist
     if not os.path.exists(output_dir):
@@ -70,7 +67,7 @@ def boundary_mark(
                 mask_green = cv2.morphologyEx(mask_green, cv2.MORPH_CLOSE, kernel)
 
                 # 4. Find green contours
-                contours, _ = cv2.findContours(
+                contours, Mat = cv2.findContours(
                     mask_green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
                 )
 
@@ -79,7 +76,7 @@ def boundary_mark(
                 for cnt in contours:
                     epsilon = approx_epsilon_factor * cv2.arcLength(cnt, True)
                     approx = cv2.approxPolyDP(cnt, epsilon, True)
-                    cv2.polylines(
+                    Mat = cv2.polylines(
                         output_img_approx,
                         [approx],
                         isClosed=True,
@@ -94,7 +91,7 @@ def boundary_mark(
 
                         if min_segment_len <= segment_length <= max_segment_len:
                             total_length_pixels += segment_length
-                            cv2.line(
+                            _ = cv2.line(
                                 processed_lines_img,
                                 tuple(p1),
                                 tuple(p2),
@@ -102,7 +99,7 @@ def boundary_mark(
                                 2,
                             )
                         else:
-                            cv2.line(
+                            Mat = cv2.line(
                                 processed_lines_img,
                                 tuple(p1),
                                 tuple(p2),
@@ -127,39 +124,9 @@ def boundary_mark(
                 segments_output_path = os.path.join(
                     output_dir, f"{os.path.splitext(filename)[0]}_segments.png"
                 )
-                cv2.imwrite(approx_output_path, output_img_approx)
-                cv2.imwrite(segments_output_path, processed_lines_img)
+                _ = cv2.imwrite(approx_output_path, output_img_approx)
+                _ = cv2.imwrite(segments_output_path, processed_lines_img)
 
-    print(f"\nProcessing complete. Processed images saved to '{output_dir}'.")
-    print(f"Segment length data saved to '{csv_path}'.")
-
-
-if __name__ == "__main__":
-    # --- Configuration ---
-    # NOTE: You might need to adjust these paths and parameters for your setup.
-
-    # Assumes the script is in '.../Image_Processing' and the images are in '.../Micro'
-    CWD = os.path.dirname(os.path.realpath(__file__))
-    DEFAULT_IMAGE_DIR = os.path.join(CWD, "..", "Micro")
-    DEFAULT_OUTPUT_DIR = os.path.join(CWD, "processed_images")
-    DEFAULT_CSV_PATH = os.path.join(CWD, "segment_lengths.csv")
-
-    print(f"Starting batch processing...")
-    print(f"Image Source: {DEFAULT_IMAGE_DIR}")
-    print(f"Outputting to: {DEFAULT_OUTPUT_DIR}")
     print("-" * 30)
-
-    # --- Call the main function ---
-    process_images_in_directory(
-        image_dir=DEFAULT_IMAGE_DIR,
-        output_dir=DEFAULT_OUTPUT_DIR,
-        csv_path=DEFAULT_CSV_PATH,
-        # --- Optional: Adjust processing parameters here if needed ---
-        # approx_epsilon_factor=0.0035,
-        # min_segment_len=60,
-        # max_segment_len=600,
-        # pixel_to_micron=1.13636,
-        # hsv_lower_thresh=(40, 40, 40),
-        # hsv_upper_thresh=(70, 255, 255),
-        # morph_kernel_size=(5, 5),
-    )
+    print(f"Processing complete. Processed images saved to '{output_dir}'.")
+    print(f"Segment length data saved to '{csv_path}'.")
