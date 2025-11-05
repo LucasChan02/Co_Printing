@@ -1,0 +1,165 @@
+import cv2
+import numpy as np
+import os
+import csv
+
+
+def boundary_mark(
+    image_dir,
+    output_dir,
+    csv_path,
+    approx_epsilon_factor=0.0035,
+    min_segment_len=60,
+    max_segment_len=600,
+    pixel_to_micron=1.13636,
+    hsv_lower_thresh=(40, 40, 40),
+    hsv_upper_thresh=(70, 255, 255),
+    morph_kernel_size=(5, 5),
+):
+    """
+    Processes all images in a directory to detect contours, filter them by segment length,
+    and save the results.
+
+    Args:
+        image_dir (str): Path to the directory containing images to process.
+        output_dir (str): Path to the directory where processed images will be saved.
+        csv_path (str): Path to the CSV file to save segment length data.
+        approx_epsilon_factor (float): Factor for approximating contour shape.
+        min_segment_len (int): Minimum length of a contour segment to be approved.
+        max_segment_len (int): Maximum length of a contour segment to be approved.
+        pixel_to_micron (float): Conversion factor from pixels to microns.
+        hsv_lower_thresh (tuple): Lower bound for the HSV color mask.
+        hsv_upper_thresh (tuple): Upper bound for the HSV color mask.
+        morph_kernel_size (tuple): Kernel size for morphological closing.
+    """
+    # Create output directory if it doesn't exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Open CSV file for writing
+    with open(csv_path, "w", newline="") as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerow(
+            ["image_filename", "total_length_microns", "total_length_mm"]
+        )
+
+        # List all files in the image directory
+        for filename in os.listdir(image_dir):
+            # Check for common image file extensions
+            if filename.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".tiff")):
+                image_path = os.path.join(image_dir, filename)
+
+                # 1. Load Image
+                img = cv2.imread(image_path)
+                if img is None:
+                    print(f"Warning: Could not read image {filename}. Skipping.")
+                    continue
+
+                # Create output images
+                output_img_approx = img.copy()
+                processed_lines_img = np.zeros_like(img)
+
+                # 2. Convert to HSV and create mask
+                hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                lower_green = np.array(hsv_lower_thresh)
+                upper_green = np.array(hsv_upper_thresh)
+                mask_green = cv2.inRange(hsv, lower_green, upper_green)
+
+                # 3. Clean the mask
+                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, morph_kernel_size)
+                mask_green = cv2.morphologyEx(mask_green, cv2.MORPH_CLOSE, kernel)
+
+                # 4. Find green contours
+                contours, _ = cv2.findContours(
+                    mask_green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+                )
+
+                # 5. Process each contour
+                total_length_pixels = 0
+                for cnt in contours:
+                    epsilon = approx_epsilon_factor * cv2.arcLength(cnt, True)
+                    approx = cv2.approxPolyDP(cnt, epsilon, True)
+                    cv2.polylines(
+                        output_img_approx,
+                        [approx],
+                        isClosed=True,
+                        color=(255, 0, 0),
+                        thickness=2,
+                    )
+
+                    for i in range(len(approx)):
+                        p1 = approx[i][0]
+                        p2 = approx[(i + 1) % len(approx)][0]
+                        segment_length = np.linalg.norm(p1 - p2)
+
+                        if min_segment_len <= segment_length <= max_segment_len:
+                            total_length_pixels += segment_length
+                            cv2.line(
+                                processed_lines_img,
+                                tuple(p1),
+                                tuple(p2),
+                                (0, 255, 0),
+                                2,
+                            )
+                        else:
+                            cv2.line(
+                                processed_lines_img,
+                                tuple(p1),
+                                tuple(p2),
+                                (0, 0, 255),
+                                2,
+                            )
+
+                # 6. Convert length and save results
+                length_microns = total_length_pixels * pixel_to_micron
+                length_mm = length_microns / 1000
+                print(
+                    f"Processed {filename}: Total length of approved segments ≈ {length_mm:.4f} mm"
+                )
+
+                # Write to CSV
+                csv_writer.writerow([filename, length_microns, length_mm])
+
+                # 7. Save the processed images
+                approx_output_path = os.path.join(
+                    output_dir, f"{os.path.splitext(filename)[0]}_approximated.png"
+                )
+                segments_output_path = os.path.join(
+                    output_dir, f"{os.path.splitext(filename)[0]}_segments.png"
+                )
+                cv2.imwrite(approx_output_path, output_img_approx)
+                cv2.imwrite(segments_output_path, processed_lines_img)
+
+    print(f"\nProcessing complete. Processed images saved to '{output_dir}'.")
+    print(f"Segment length data saved to '{csv_path}'.")
+
+
+if __name__ == "__main__":
+    # --- Configuration ---
+    # NOTE: You might need to adjust these paths and parameters for your setup.
+
+    # Assumes the script is in '.../Image_Processing' and the images are in '.../Micro'
+    CWD = os.path.dirname(os.path.realpath(__file__))
+    DEFAULT_IMAGE_DIR = os.path.join(CWD, "..", "Micro")
+    DEFAULT_OUTPUT_DIR = os.path.join(CWD, "processed_images")
+    DEFAULT_CSV_PATH = os.path.join(CWD, "segment_lengths.csv")
+
+    print(f"Starting batch processing...")
+    print(f"Image Source: {DEFAULT_IMAGE_DIR}")
+    print(f"Outputting to: {DEFAULT_OUTPUT_DIR}")
+    print("-" * 30)
+
+    # --- Call the main function ---
+    process_images_in_directory(
+        image_dir=DEFAULT_IMAGE_DIR,
+        output_dir=DEFAULT_OUTPUT_DIR,
+        csv_path=DEFAULT_CSV_PATH,
+        # --- Optional: Adjust processing parameters here if needed ---
+        # approx_epsilon_factor=0.0035,
+        # min_segment_len=60,
+        # max_segment_len=600,
+        # pixel_to_micron=1.13636,
+        # hsv_lower_thresh=(40, 40, 40),
+        # hsv_upper_thresh=(70, 255, 255),
+        # morph_kernel_size=(5, 5),
+    )
