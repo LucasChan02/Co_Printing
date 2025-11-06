@@ -1,7 +1,9 @@
+import csv
+import os
+
 import cv2
 import numpy as np
-import os
-import csv
+
 # from typing import Tuple
 
 
@@ -10,12 +12,13 @@ def boundary_mark(
     output_dir: str,
     csv_path: str,
     approx_epsilon_factor: float = 0.0035,
-    min_segment_len: int = 60,
+    min_segment_len: int = 80,
     max_segment_len: int = 600,
     pixel_to_micron: float = 1.13636,
     hsv_lower_thresh: tuple[int, int, int] = (40, 40, 40),
     hsv_upper_thresh: tuple[int, int, int] = (70, 255, 255),
-    morph_kernel_size: tuple[int, int] = (5, 5),
+    morph_kernel_size: tuple[int, int] = (6, 6),
+    display_images: bool = False,
 ) -> None:
     """Args:
     image_dir (str): Path to the directory containing images to process.
@@ -98,14 +101,14 @@ def boundary_mark(
                                 (0, 255, 0),
                                 2,
                             )
-                        else:
-                            Mat = cv2.line(
-                                processed_lines_img,
-                                tuple(p1),
-                                tuple(p2),
-                                (0, 0, 255),
-                                2,
-                            )
+                        # else:  #  Do not draw
+                        #     Mat = cv2.line(
+                        #         processed_lines_img,
+                        #         tuple(p1),
+                        #         tuple(p2),
+                        #         (0, 0, 255),
+                        #         2,
+                        #     )
 
                 # 6. Convert length and save results
                 length_microns = total_length_pixels * pixel_to_micron
@@ -124,8 +127,20 @@ def boundary_mark(
                 segments_output_path = os.path.join(
                     output_dir, f"{os.path.splitext(filename)[0]}_segments.png"
                 )
-                _ = cv2.imwrite(approx_output_path, output_img_approx)
+                resized_approx = cv2.resize(output_img_approx, (768, 512))
+                _ = cv2.imwrite(approx_output_path, resized_approx)
                 _ = cv2.imwrite(segments_output_path, processed_lines_img)
+
+                # 8. Display images if flag is set
+                if display_images:
+                    cv2.namedWindow("Approximated", cv2.WINDOW_NORMAL)
+                    cv2.resizeWindow("Approximated", 768, 512)
+                    cv2.imshow("Approximated", output_img_approx)
+                    cv2.namedWindow("Segments", cv2.WINDOW_NORMAL)
+                    cv2.resizeWindow("Segments", 768, 512)
+                    cv2.imshow("Segments", processed_lines_img)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
 
     print("-" * 30)
     print(f"Processing complete. Processed images saved to '{output_dir}'.")
