@@ -19,6 +19,10 @@ def boundary_mark(
     hsv_upper_thresh: tuple[int, int, int] = (70, 255, 255),
     morph_kernel_size: tuple[int, int] = (6, 6),
     display_images: bool = False,
+    denoise_h: float = 3.0,
+    denoise_h_color: float = 3.0,
+    denoise_template_window_size: int = 7,
+    denoise_search_window_size: int = 21,
 ) -> None:
     """Args:
     image_dir (str): Path to the directory containing images to process.
@@ -31,6 +35,10 @@ def boundary_mark(
     hsv_lower_thresh (tuple): Lower bound for the HSV color mask.
     hsv_upper_thresh (tuple): Upper bound for the HSV color mask.
     morph_kernel_size (tuple): Kernel size for morphological closing.
+    denoise_h (float): Filter strength for luminance component. 0 to disable.
+    denoise_h_color (float): Filter strength for color components.
+    denoise_template_window_size (int): Template patch size for denoising.
+    denoise_search_window_size (int): Search window size for denoising.
     """
     # Create output directory if it doesn't exist
     if not os.path.exists(output_dir):
@@ -54,6 +62,17 @@ def boundary_mark(
                 if img is None:
                     print(f"Warning: Could not read image {filename}. Skipping.")
                     continue
+
+                # Denoise the image if strength is specified
+                if denoise_h > 0:
+                    img = cv2.fastNlMeansDenoisingColored(
+                        img,
+                        None,
+                        denoise_h,
+                        denoise_h_color,
+                        denoise_template_window_size,
+                        denoise_search_window_size,
+                    )
 
                 # Create output images
                 output_img_approx = img.copy()

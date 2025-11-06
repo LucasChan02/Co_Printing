@@ -1,5 +1,6 @@
-from boundary_mark import boundary_mark
 import os
+
+from boundary_mark import boundary_mark
 
 if __name__ == "__main__":
     CWD = os.path.dirname(os.path.realpath(__file__))
@@ -15,11 +16,15 @@ if __name__ == "__main__":
         image_dir=IMAGE_DIR,
         output_dir=OUTPUT_DIR,
         csv_path=CSV_PATH,
-        # approx_epsilon_factor=0.0035,
-        # min_segment_len=60,
-        # max_segment_len=600,
-        # pixel_to_micron=1.13636,
-        # hsv_lower_thresh=(40, 40, 40),
-        # hsv_upper_thresh=(70, 255, 255),
-        # morph_kernel_size=(5, 5),
+        min_segment_len=85,
+        max_segment_len=500,
+        pixel_to_micron=0.844451,
+        hsv_lower_thresh=(60, 140, 18),
+        hsv_upper_thresh=(130, 255, 255),
+        morph_kernel_size=(5, 5),
+        display_images=False,
+        denoise_h=6,
+        denoise_h_color=8,
+        denoise_template_window_size=7,
+        denoise_search_window_size=21,
     )
