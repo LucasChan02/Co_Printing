@@ -24,9 +24,8 @@
   ),
   index-terms: ("Additive Manufacturing", "Multi-Head 3D Printing", 
     "Fused Filament Fabrication (FFF)", "Interfacial Strength", 
-    "Mechanical Interlocking", "Computer Vision", 
-    "Process-Structure-Property (PSP) Model", "Part Decomposition", 
-    "Genetic Algorithm", "In-situ Thermal Monitoring"),
+    "Mechanical Interlocking", "Process-Structure-Property (PSP) Model", 
+    "Part Decomposition", "In-situ Thermal Monitoring"),
   //bibliography: bibliography("refs.bib"),
 )
 
@@ -36,22 +35,37 @@
 
 === Background and Motivation
 
+  Brief review of existing strategies: process parameter optimization (raster angles, layer hight, etc.), thermal management, and geometric design. 
+
 === Problem Statement
 
   Lack of understanding of how decomposition strategies affect interfacial strength from geometric and process parameters.
 
+  Discussion of the thermo-physical phenomena in polymer bonding and how "cold joints" at the boundary leads to poor interconnection.
+
+  Introduce controlled mechanical interlocking as a robust method, setting the stage for the novel programmable, vertically-oriented interlocking proposed in this work.
+
 === Objectives
 
-  + Develop a Process-Structure-Property (PSP) model for quantifying the relationship between pattern topology, process parameters, and mechanical strength.
+  + A Process-Structure-Property (PSP) model for quantifying the relationship between pattern topology, process parameters, and mechanical strength.
   + A novel method for programmable interlocking interfaces. 
-  + A "Strength-Aware Decomposition Framework" using Generative Algorithm (GA or PSO or MCTS) to optimize part decomposition for maximum mechanical integrity
+  + A "Strength-Aware Decomposition Framework" using Generative/Searching Algorithm (GA or PSO or MCTS) to optimize part decomposition for maximum mechanical integrity
 
 == Parametric Modeling
 
-Create a mathematical way to describe interface topologies. Define derived geometry descriptors for comparative analysis:
--   Surface Area Enhancement Factor
--   Mechanical Interlocking Depth
--   Volumetric Interlock Ratio
+=== Parameterization of Interface geometries
+
+  Create a mathematical way to describe interface topologies. Define following geometry descriptors for comparative analysis:
+  -   Surface Area Enhancement Factor
+  -   Mechanical Interlocking Depth
+  -   Volumetric Interlock Ratio
+
+=== Thermal History at Bonding Interface
+
+Use "Interdiffusion Time Window" ($t_("interdiff")$) to describe thermal history, the duration the interface remains above sufficient bonding temperature $T_g$. 
+
+In printing process, this is critically influenced by the "Bonding Interval" ($Delta t_"bond"$), a controllable parameter representing the time between adjacent depositions at the seam.
+
 
 == Methodology
 
@@ -82,7 +96,7 @@ Create a mathematical way to describe interface topologies. Define derived geome
   Use of thermal imaging for process monitoring.
 
 === Automated Feature Segmentation via Computer Vision
-To overcome manual analysis bias, a U-Net CNN could be developed for objective, high-throughput semantic segmentation of microscopic images.
+To overcome manual analysis bias, a U-Net CNN could be implemented for objective, high-throughput semantic segmentation of microscopic images.
 -   *Segmentation Classes:*
     1.  Adhesion_Interface_Closing
     2.  Adhesion_Interface_Opening_Upper
