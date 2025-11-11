@@ -1,60 +1,71 @@
 import argparse
 import os
-import shutil
-import tempfile
 
-from boundary_detection import contact_boundary_detection
+import cv2
+
+# import numpy as np
+from boundary_detection_rgb import contact_boundary_detection_rgb
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Run contact_boundary_detection on a single image for testing."
+        description="Run contact_boundary_detection_rgb on a single image for testing with display enabled."
     )
-    parser.add_argument(
-        "image_path",
-        help="Path to image",
-    )
+    parser.add_argument("image_path", help="Path to the image file.")
     args = parser.parse_args()
 
-    image_path = args.image_path
-    if not os.path.isfile(image_path):
-        print(f"Error: File not found at '{image_path}'")
+    if not os.path.isfile(args.image_path):
+        print(f"Error: File not found at '{args.image_path}'")
         exit(1)
 
-    # Create a temporary directory to isolate the single image for processing
-    with tempfile.TemporaryDirectory() as temp_dir:
-        # Copy the image to the temporary directory
-        shutil.copy(image_path, temp_dir)
+    # --- Processing Parameters for Testing ---
+    # Adjust these values to tune the detection
+    PARAMS = {
+        "approx_epsilon_factor": 0.0035,
+        "min_segment_len": 80,
+        "max_segment_len": 600,
+        "red_channel_thresh_g": 23,
+        "morph_kernel_size_g": (6, 6),
+        "red_channel_thresh_w": 22,
+        "morph_kernel_size_w": (3, 3),
+        "contact_distance_threshold": 40,
+        "denoise_h": 5.0,
+        "denoise_h_color": 3.0,
+        "denoise_template_window_size": 9,
+        "denoise_search_window_size": 27,
+    }
+    # --- End of Parameters ---
 
-        # Define output paths within the temporary directory
-        output_dir = os.path.join(temp_dir, "processed")
-        csv_path = os.path.join(output_dir, "contact_lengths.csv")
+    # Load the image
+    img = cv2.imread(args.image_path)
+    if img is None:
+        print(f"Error: Could not read image from '{args.image_path}'")
+        exit(1)
 
-        print("--- Single Image Test ---")
-        print(f"Processing: {image_path}")
-        print(f"Using temporary directory: {temp_dir}")
-        print("Displaying results visually.")
-        print("-" * 30)
+    print("--- Single Image Test ---")
+    print(f"Processing: {args.image_path}")
+    print("-" * 30)
 
-        # Run the processing function
-        contact_boundary_detection(
-            image_dir=temp_dir,
-            output_dir=output_dir,
-            csv_path=csv_path,
-            min_segment_len=70,
-            max_segment_len=500,
-            pixel_to_micron=0.844451,
-            hsv_lower_thresh_g=(60, 140, 18),
-            hsv_upper_thresh_g=(130, 255, 255),
-            morph_kernel_size_g=(7, 7),
-            hsv_lower_thresh_w=(20, 50, 0),
-            hsv_upper_thresh_w=(70, 170, 255),
-            morph_kernel_size_w=(7, 7),
-            contact_distance_threshold=10,
-            display_images=True,
-            denoise_h=6,
-            denoise_h_color=8,
-            denoise_template_window_size=7,
-            denoise_search_window_size=21,
-        )
+    # Run the processing function on the single image with visualization enabled
+    contact_segments, contours_img, lines_img = contact_boundary_detection_rgb(
+        img=img, visualize=True, **PARAMS
+    )
 
-        print("-" * 30)
+    print(f"Found {len(contact_segments)} contact segments.")
+    for i, (p1, p2) in enumerate(contact_segments):
+        print(f"  Segment {i}: Start({p1[0]}, {p1[1]}), End({p2[0]}, {p2[1]})")
+
+    print("-" * 30)
+
+    # Display images
+    cv2.namedWindow("All Contours", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("All Contours", 768, 512)
+    cv2.imshow("All Contours", contours_img)
+
+    cv2.namedWindow("Contact Segments", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("Contact Segments", 768, 512)
+    cv2.imshow("Contact Segments", lines_img)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    print("Test complete.")

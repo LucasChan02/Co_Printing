@@ -304,10 +304,12 @@ Hypothesis: $R_"IV"$ is a more complete descriptor of mechanical interlocking th
 #pagebreak()
 
 = Predictive Model for Interfacial Strength (WIP)
-This section synthesizes all previous components into the final Process-Structure-Property (PSP) model, as specified in the research objective. This model will predict the Tensile_Strength (Property) using both the controllable Process parameters and the derived Structure descriptors.
+
+Synthesize all previous components into the final Process-Structure-Property (PSP) model, which will predict the Tensile_Strength using both the controllable Process parameters and the derived Structure descriptors.
 
 == PSP Model Variable Definitions
-A robust predictive model requires a well-defined set of independent (predictor) and dependent (response) variables. Table 1 serves as the "data dictionary" for the complete experiment, mapping the inputs and outputs of the PSP framework.
+
+A predictive model requires a well-defined set of independent (predictor) and dependent (response) variables. Table below serves as the data dictionary for experiments, mapping the inputs and outputs and model training.
 
 #figure(
   table(
@@ -344,16 +346,15 @@ A robust predictive model requires a well-defined set of independent (predictor)
   caption: [Table 1. Process-Structure-Property (PSP) Model Variable Definitions]
 )
 
-This data structure, by including both aggregate ($k_s$, $d_"inter"$, $R_"IV"$) and segmental ($L_("Horizontal"), L_("Opening, U")$, etc.) descriptors, allows the model to answer highly specific research questions (e.g., "Is overall strength more correlated with total horizontal bonding area, $L_("Horizontal")$, or the mechanical hook length, $L_("Opening, U")$?").
 
 //---
 
 
-=== Beyond Linear Regression
+=== ML Algorithm
 
-While standard Multivariate Linear Regression (MLR) is a valid starting point, the physical relationships in FFF are known to be highly complex and non-linear. For example, the effect of Print_Speed on bond quality is non-linear and heavily interacts with thermal parameters.
+Standard Multivariate Linear Regression (MLR) is a valid starting point, but the physical relationships in FFF are known to be highly complex and non-linear. For example, the effect of Print_Speed heavily interacts with thermal parameters and is non-linear to bond quality.
 
-A more powerful and appropriate approach is to use tree-based ensemble models, such as Random Forest (RF) or Gradient Boosting (e.g., XGBoost).
+A more powerful and appropriate approach is to use tree-based ensemble models, such as Random Forest (RF) or Gradient Boosting (XGBoost).
 
 == Parametric Generation of Interface Patterns
 
@@ -381,7 +382,7 @@ A more powerful and appropriate approach is to use tree-based ensemble models, s
 
 = Discussion
 
-== Interpretation of Key Trends
+== Key Trends Interpretation 
 
   How pattern topology affects bonded area and mechanical interlocking.
   Trade-offs between deposition timing, overlap, and cooling.
@@ -398,11 +399,11 @@ A more powerful and appropriate approach is to use tree-based ensemble models, s
 
 Using the validated PSP model as the engine for generative design. 
 
-*Objective Function:* Maximize the predicted strength along the entire seam (a "max-min" approach), eliminate the weakest link.
+Objective Function: Maximize the predicted strength along the entire seam, eliminate the weakest link.
 
-*Decision Variables:* Parameters defining the decomposition seam path and the vertical interlocking geometry.
+Decision Variables: Parameters defining the decomposition seam path and the vertical interlocking geometry.
 
-*Constraints:* Manufacturing limitations, including minimum bonding interval ($Delta t_"bond", min$, depend on layer printing time and printhead avoidance distance); maximum horizontal interlocking length ($(d_"inter")_max$ for neighbouring layers, depend on part geometry); minimum boundary incline angle in input geometry (to ensure sufficient bonding at the interface while providing clearance if multiple heads working on different layer).
+Constraints: Manufacturing limitations, including minimum bonding interval ($Delta t_"bond", min$, depend on layer printing time and printhead avoidance distance); maximum horizontal interlocking length ($(d_"inter")_max$ for neighbouring layers, depend on part geometry); minimum boundary incline angle in input geometry (to ensure sufficient bonding at the interface while providing clearance if multiple heads working on different layer).
 
 == Algorithm Implementation
 

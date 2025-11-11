@@ -120,14 +120,17 @@ def boundary_mark(
                                 (0, 255, 0),
                                 2,
                             )
-                        # else:  #  Do not draw
-                        #     Mat = cv2.line(
-                        #         processed_lines_img,
-                        #         tuple(p1),
-                        #         tuple(p2),
-                        #         (0, 0, 255),
-                        #         2,
-                        #     )
+
+                        """
+                        else:  #  Do not draw
+                            Mat = cv2.line(
+                                processed_lines_img,
+                                tuple(p1),
+                                tuple(p2),
+                                (0, 0, 255),
+                                2,
+                            )
+                        """
 
                 # 6. Convert length and save results
                 length_microns = total_length_pixels * pixel_to_micron
