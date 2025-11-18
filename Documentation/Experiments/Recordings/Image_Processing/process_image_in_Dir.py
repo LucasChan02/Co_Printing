@@ -3,16 +3,12 @@ import os
 import cv2
 
 from boundary_detection_rgb import contact_boundary_detection_rgb
-from data_recorder import save_contact_data, save_summary_data
+from image_output import save_csv_data, save_visualization_images
 
 if __name__ == "__main__":
     CWD = os.path.dirname(os.path.realpath(__file__))
     IMAGE_DIR = os.path.join(CWD, "..", "Micro/4x")
     OUTPUT_DIR = os.path.join(IMAGE_DIR, "processed_images_split")
-
-    # Define paths for the new CSV output files
-    DETAILED_CSV_PATH = os.path.join(OUTPUT_DIR, "contact_segments_detailed.csv")
-    SUMMARY_CSV_PATH = os.path.join(OUTPUT_DIR, "contact_lengths_summary.csv")
 
     # --- Processing Parameters ---
     PIXEL_TO_MICRON = 1.13636
@@ -59,27 +55,11 @@ if __name__ == "__main__":
 
         all_image_data[filename] = contact_segments
 
-        # Save the visualization images
-        contour_output_path = os.path.join(
-            OUTPUT_DIR, f"{os.path.splitext(filename)[0]}_contours.png"
-        )
-        segments_output_path = os.path.join(
-            OUTPUT_DIR, f"{os.path.splitext(filename)[0]}_contact_segments.png"
-        )
-
-        # Resize for consistent output size if desired
-        resized_contours = cv2.resize(contours_img, (768, 512))
-
-        cv2.imwrite(contour_output_path, resized_contours)
-        cv2.imwrite(segments_output_path, lines_img)
+        # Save the visualization images using the new output function
+        save_visualization_images(OUTPUT_DIR, filename, contours_img, lines_img)
 
     # After processing all images, save the data to CSV files
-    if all_image_data:
-        print(f"Saving detailed segment data to {DETAILED_CSV_PATH}")
-        save_contact_data(DETAILED_CSV_PATH, all_image_data, PIXEL_TO_MICRON)
-
-        print(f"Saving summary data to {SUMMARY_CSV_PATH}")
-        save_summary_data(SUMMARY_CSV_PATH, all_image_data, PIXEL_TO_MICRON)
+    save_csv_data(OUTPUT_DIR, all_image_data, PIXEL_TO_MICRON)
 
     print("-" * 30)
     print("Processing complete.")

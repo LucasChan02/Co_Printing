@@ -5,6 +5,7 @@ import cv2
 
 # import numpy as np
 from boundary_detection_rgb import contact_boundary_detection_rgb
+from image_output import display_images
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -57,15 +58,6 @@ if __name__ == "__main__":
     print("-" * 30)
 
     # Display images
-    cv2.namedWindow("All Contours", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("All Contours", 768, 512)
-    cv2.imshow("All Contours", contours_img)
-
-    cv2.namedWindow("Contact Segments", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Contact Segments", 768, 512)
-    cv2.imshow("Contact Segments", lines_img)
-
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    display_images(contours_img, lines_img)
 
     print("Test complete.")

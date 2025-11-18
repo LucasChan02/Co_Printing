@@ -105,7 +105,7 @@ def contact_boundary_detection_rgb(
                     min_dist = dist
 
             if min_dist < contact_distance_threshold:
-                contact_segments.append(seg_g)
+                contact_segments.append((p2_g, p1_g))
 
     # Sort segments from top to bottom
     contact_segments.sort(key=lambda seg: (seg[0][1] + seg[1][1]) / 2)
