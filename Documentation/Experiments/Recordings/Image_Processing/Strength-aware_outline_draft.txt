@@ -1,0 +1,460 @@
+#import "@preview/charged-ieee:0.1.4": ieee
+
+#let Category = none
+
+#show: ieee.with(
+  title: [
+  ],
+  abstract: [
+  ],
+  authors: (
+    (
+      name: "Author One",
+      department: [Dept. of Mechanical Engineering],
+      organization: [University of Research],
+      location: [City, Country],
+      email: "author.one@university.edu"
+    ),
+  ),
+  index-terms: (
+    "Additive Manufacturing", "Multi-Head 3D Printing", 
+    "Fused Filament Fabrication (FFF)", "Interfacial Strength", 
+    "Mechanical Interlocking", "Computer Vision", 
+    "Process-Structure-Property (PSP) Model", "Part Decomposition", 
+    "Genetic Algorithm", "In-situ Thermal Monitoring"
+  ),
+  //bibliography: bibliography("refs.bib"),
+)
+
+// --- Content Goes Below ---
+
+== Introduction
+
+=== The Productivity Imperative and Multi-Head AM
+Overview of Additive Manufacturing (AM) transitioning to serial 
+production and the need for higher throughput. Introduction of 
+multi-head systems, specifically those with independent XY-plane 
+motion, as a key enabler for parallel processing by decomposing 
+large parts.
+
+=== The Interfacial Strength Bottleneck
+While decomposition boosts productivity, it creates seams that 
+are structural weak points. Discussion of the thermo-physical 
+phenomena of polymer bonding (reptation, $T_g$) and how "cold 
+joints" form due to insufficient thermal energy at the interface, 
+leading to poor interdiffusion.
+
+=== State-of-the-Art in Interface Engineering
+Brief review of existing strategies: process parameter optimization (raster angles, layer hight, etc.), thermal management, and geometric design. Introduction of controlled mechanical interlocking as a robust method, setting the stage for the novel programmable, vertically-oriented interlocking proposed in this work.
+
+=== Research Gap and Proposed Contribution
+Current decomposition strategies optimize for time or material, 
+not mechanical strength, treating interfaces as a liability. 
+This research reframes the interface as a designable feature.
+Contributions are:
+1.  A novel method for programmable interlocking interfaces.
+2.  A quantitative Process-Structure-Property (PSP) model 
+    linking parameters to strength, built on thermal monitoring 
+    and CV-based microstructural analysis.
+3.  A "Strength-Aware Decomposition Framework" using a 
+    Genetic Algorithm (GA) to optimize part decomposition 
+    for maximum mechanical integrity.
+
+== Parametric Modeling and Thermal Dynamics
+
+=== Mathematical Parameterization of Interface Geometries
+Establish a formal mathematical framework to describe interface topologies (e.g., Sinusoidal, Triangular, Square, Interlocking Features).
+Define derived, geometry-agnostic descriptors for comparative analysis:
+-   Surface Area Enhancement Factor (SAEF)
+-   Mechanical Interlocking Depth (MID)
+-   Volumetric Interlock Ratio (VIR)
+
+=== Modeling of Thermal Dynamics at the Bonding Interface
+Bond strength is governed by thermal history, specifically the 
+"Interdiffusion Time Window" ($t_("interdiff")$), the duration the 
+interface remains above $T_g$. This is critically influenced 
+by the "Bonding Interval" ($Delta t_"bond"$)—a controllable 
+parameter in multi-head systems representing the time between 
+adjacent depositions at the seam.
+
+== Experimental Methodology
+
+=== Specimen Fabrication and Design of Experiments (DoE)
+-   *Material Selection:* Polyethylene Terephthalate Glycol (PETG).
+-   *Specimen Geometry:* ASTM D638 Type I ("dog-bone") with 
+    the engineered interface at the gauge length center.
+-   *DoE Matrix:* A full factorial experiment to systematically 
+    explore the parameter space.
+    -   *Factors:* Interface Pattern (Type, Amplitude, Wavelength), 
+        Process ($Delta t_"bond"$, Print Speed, Extrusion Multiplier).
+    -   *Responses:* Mechanical (UTS, Modulus), Thermal 
+        ($t_"interdiff"$), Microstructural (Void Fraction, etc.).
+
+=== In-situ Process Monitoring and Post-Process Mechanical Testing
+-   *Thermal Imaging:* Use of a high-resolution IR camera to 
+    record thermal video of interface formation, allowing for 
+    empirical calculation of $t_"interdiff"$.
+-   *Mechanical Testing:* Uniaxial tensile testing (ASTM D638) 
+    on a universal testing machine to acquire stress-strain 
+    curves and determine UTS, Modulus, and Elongation at Break.
+-   *Microstructural Analysis:* Sectioning, polishing, and 
+    microscopic imaging (Optical/SEM) of interfacial zones 
+    to provide visual data for segmentation.
+
+=== Automated Interfacial Feature Segmentation via Deep Learning
+To overcome manual analysis bias, a U-Net convolutional 
+neural network (CNN) is developed for objective, high-throughput 
+semantic segmentation of microscopic images.
+-   *Segmentation Classes:*
+    1.  Adhesion_Interface_Closing
+    2.  Adhesion_Interface_Opening_Upper
+    3.  Adhesion_Interface_Opening_Lower
+    4.  Horizontal_Interlock_Surface
+    5.  Void/Porosity
+-   *Workflow:* Data Annotation (ground truth), Model Training 
+    (with augmentation), Validation (using mean 
+    Intersection-over-Union, mIoU), and Deployment.
+
+== Development of a Predictive Process-Structure-Property (PSP) Model
+The analytical core synthesizing all experimental data into a 
+quantitative, causal chain.
+
+=== Correlating Process Parameters to Interfacial Structure (Process -> Structure)
+A multivariate regression model mapping controllable DoE inputs 
+(e.g., Amplitude, $Delta t_"bond"$) to quantitative structural 
+metrics from the U-Net (e.g., Void_Area_Fraction, 
+Area_Horizontal_Interlock_Surface).
+
+=== Mapping Interfacial Structure to Mechanical Performance (Structure -> Property)
+A second regression model linking the measured structural 
+features and thermal data (e.g., Void Fraction, $t_"interdiff"$) 
+to the final experimentally measured Ultimate Tensile Strength (UTS). 
+This model reveals the "strength contribution" of each 
+microstructural feature.
+
+=== The Integrated PSP Framework and Model Validation
+Combining the two stages into a single framework that predicts 
+UTS directly from the initial process parameters. The model is 
+validated using a hold-out test set, with performance evaluated 
+by $R^2$ and Mean Absolute Percentage Error (MAPE).
+
+== A Strength-Aware Decomposition Framework for Multi-Head AM
+
+=== Optimization Problem Formulation
+Using the validated PSP model as a generative design engine.
+-   *Objective Function:* Maximize the minimum predicted 
+    strength along the entire seam (a "max-min" approach) 
+    to eliminate the weakest link.
+-   *Decision Variables:* Parameters defining the decomposition 
+    seam path and the local interlocking geometry (Amplitude, 
+    Wavelength) along that path.
+-   *Constraints:* Manufacturing limitations (e.g., 
+    $Delta t_"bond", min$, $("MID")_max$, minimum part incline 
+    angle, assemblability).
+
+=== Algorithmic Implementation using a Genetic Algorithm (GA)
+A GA is used to solve the complex, non-linear optimization 
+problem.
+-   *Chromosome Encoding:* A numerical string representing 
+    a complete decomposition solution (seam path + interface 
+    geometry).
+-   *Fitness Function:* The PSP model is used to evaluate 
+    the fitness of each "chromosome" based on its 
+    predicted minimum seam strength.
+-   *Genetic Operators:* Selection, Crossover, and Mutation 
+    evolve the population toward an optimal solution.
+
+=== Case Study and Validation
+-   *Benchmark Geometry:* A complex, representative 3D 
+    model (e.g., topologically optimized bracket) is selected.
+-   *Computational Demonstration:* The GA framework is 
+    run to generate an optimized decomposition path and 
+    variable interface geometry.
+-   *Experimental Validation:*
+    -   *Version A (Baseline):* Fabricated with a simple, 
+        non-optimized decomposition.
+    -   *Version B (Optimized):* Fabricated using the 
+        GA-generated solution.
+    -   Both versions are mechanically tested to failure. 
+        The hypothesis is that Version B will show a 
+        significantly higher failure load and fail in 
+        the bulk material, not at the interface.
+
+== Conclusion and Future Work
+
+=== Summary of Contributions
+Recap of the novel programmable interlocking interface, 
+the automated U-Net microstructural analysis pipeline, 
+the validated PSP model, and the generative, 
+GA-based "Strength-Aware Decomposition Framework" that 
+engineers interfaces to be stronger than the parent material.
+
+=== Discussion and Implications
+This framework overcomes a critical barrier for multi-head AM, 
+enabling the fabrication of large, functional, load-bearing 
+parts. It represents a paradigm shift from treating interfaces 
+as a problem to an opportunity for localized material 
+engineering.
+
+=== Limitations and Future Work
+-   *Limitations:* Study confined to one material (PETG) and 
+    one loading condition (quasi-static tensile).
+-   *Future Work:*
+    -   *Material Expansion:* Extend to high-performance 
+        polymers, composites, and dissimilar materials.
+    -   *Multi-Objective Optimization:* Use NSGA-II to 
+        simultaneously optimize for strength, print time, 
+        and surface finish.
+    -   *Advanced Loading Conditions:* Investigate fatigue, 
+        shear, and impact strength.
+    -   *Closed-Loop Process Control:* Use in-situ thermal 
+        data for real-time, dynamic adjustment of print 
+        parameters to ensure optimal bond quality.
+
+
+#pagebreak()
+
+From samples
+
+acquire the images (side view of connections) of multiple speciments printed under a grid of parameters
+
+研究的创新点在于, 着眼于一种仅在 多打印头独立XY驱动, 但共用Z桁架的gantry形式打印机中 便于实现的层间结合方式, 允许多个打印头同时work on same workpiece 并在打印层切换时, 通过控制打印头在结合界面的停留时机, 制造出垂直方向的啮合结构. 
+
+首先制备多种不同几何形状接合面的cad模型, 用不同接合参数打印. 在显微镜下放大到层的尺度, 拍摄锯齿状的啮合结构. 获取的图像将被用于训练计算机视觉模型CV, 从而可以自动化分段标注层和层,材料和材料间的啮合界面, 并分类统计分段的长度. 
+
+分段考虑有以下几种: 1. 方向朝向接缝的打印线(一层末端)和另一材料打印线的结合斜面, 2. 方向离开接缝的打印线(一层起始)和另一材料的结合边界上半部斜面, 3. 方向离开接缝的打印线(一层起始)和另一材料的结合边界下半部斜面, 4. 随着结合界面斜率增加或者是interlocking互锁长度增加, 产生的水平结合面 5. 因一层起始处材料堆积不足造成的空穴
+
+这个分段模型将会被用数学方法予以描述, 
+
+可变的参数有接合面曲线的局部斜率, 互锁结构的分段数(同样意义上是水平互锁结合面的数量), 以及互锁长度. zigzag的互锁结构, 从层的尺度来看可以视作一种使得结合表面面积增大\\结合更紧密的programmable扰动/噪声. 这些参数可以被用作打印路径规划的输出结果.
+
+需要控制的变量有, 接合的时间间隔(需要一定的残余温度才能保证高强度的结合), 一层结束前瞬间的提前挤出滑行量, 换层时的回抽量, 新一层起始时的加压额外挤出量prime pressure. 这些变量会影响每个个体结合斜面的倾角. 当然, 如果要建立更精确的模型, 喷嘴处材料的热动力学, 已沉积材料的冷却环境等因素都需要被纳入考量
+
+我们获得这个分段接合面模型之后, 便可以利用现存的其他研究成果, 通过控制打印时双材料的结合时间间隔微调熔融材料的结合强度, 通过调整参数化的3d模型改变分段接合面的各组长度和角度等参数. 最终制备多批不同参数组合的模型, 在测试台上测量拉伸强度, 验证模型能够准确描述围观结构.
+
+// ---
+
+=== techniques to consider
+
+GANN 
+one-shot Learning
+
+#pagebreak()
+// ---
+
+// Set up the document structure.
+#set document(title: "A Computational Framework for Interfacial Topology in Multi-Material Additive Manufacturing")
+#set heading(numbering: "I.")
+#show heading.where(level: 2): set heading(numbering: "1.1")
+#show heading.where(level: 3): set heading(numbering: "1.1.1")
+
+//---
+#pagebreak()
+
+= Data Acquisition and Formulation of the Interfacial Polyline
+
+== From Micrograph to Mask: Semantic Segmentation of Materials
+The analysis pipeline originates with the physical cross-section (Image 2). The research outline specifies a U-Net CNN for semantic segmentation. However, the specified "Segmentation Classes" (e.g., Adhesion_Interface_Closing, Horizontal_Interlock_Surface) are geometric properties of the boundary rather than pixel-level regions. A U-Net excels at classifying regions (e.g., "what material is this pixel?"), not boundary properties (e.g., "what is the slope of the interface at this pixel?").
+
+Therefore, to enable a robust geometric analysis, the U-Net's primary task should be to segment the image into its constituent regions. The classes should be:
+- Material A (e.g., the beige material)
+- Material B (e.g., the green material)
+- Void/Porosity (as specified in the research outline)
+
+This approach is more robust, as the model learns to identify materials and voids. The geometric classification of the interface is then performed in a precise, deterministic computational step (Section III) rather than a probabilistic pixel-level classification. This workflow allows for the extraction of a single, continuous polyline representing the entire interface (conceptualized in Image 1), which is required to calculate aggregate descriptors like Mechanical Interlocking Depth and Volumetric Interlock Ratio.
+
+== From Mask to Vector: Contour Extraction
+Given the binary segmentation mask from the U-Net (e.g., Material A vs. Material B), the next step is to vectorize the 2D boundary between them. This process converts the raster mask into a vector polyline.
+
+This is a standard operation in computer vision. The recommended algorithm is `cv2.findContours()` (or an equivalent), widely available in image processing libraries such as OpenCV. This function traces the boundary of the segmented regions and outputs a raw, ordered list of vertex coordinates, $L_("raw") = {(x_0, y_0), (x_1, y_1), dots}$, that defines the interface.
+
+== Polyline Simplification and Segment Definition
+The raw contour $L_("raw")$ is over-specified, noisy, and biased by the pixel grid of the sensor. It must be simplified to recover the intended geometric segments of the programmed topology.
+
+The canonical algorithm for this task is the Ramer-Douglas-Peucker (RDP) algorithm. The RDP algorithm decimates a polyline by recursively removing vertices that are within a specified perpendicular distance, $epsilon$ (epsilon), from a line segment connecting its endpoints.
+
+The output of the RDP algorithm is the final, simplified interfacial polyline: $L = {P_0, P_1, dots, P_n}$, where each $P_i = (x_i, y_i)$ is a vertex. A segment $S_i$ is formally defined as the straight line connecting the vertices $P_i$ and $P_(i+1)$.
+
+The $epsilon$ tolerance for the RDP algorithm is a critical model hyperparameter. It must be tuned to match the physical scale of the investigation.
+- A small $epsilon$ will be sensitive to microscopic surface roughness and printing artifacts, generating many short, noisy segments.
+- A large $epsilon$ will smooth over these features and capture only the primary topology (e.g., reducing the path in Image 1 to a perfect, simple triangular wave).
+
+For this application, $epsilon$ should be selected to be large enough to filter pixel-level noise but small enough to preserve the distinct vertices of the programmed interlocking "teeth."
+
+= Parametric Modeling and Classification of Interfacial Segments
+This section provides the core mathematical model for the parametric modeling of the microstructure. It classifies each segment $S_i$ of the polyline $L$ according to the segmentation classes specified in the research outline.
+
+== Local Segment Property Calculation
+For each segment $S_i$, defined by its start and end vertices $P_i (x_i, y_i)$ and $P_(i+1) (x_(i+1), y_(i+1))$, its fundamental geometric properties are calculated. The coordinate system is defined such that the x-axis is parallel to the build plate ("Horizontal") and the y-axis is parallel to the build direction (vertical).
+
+*Segment Length ($L(S_i)$):* The Euclidean distance of the segment.
+$ L(S_i) = sqrt((x_(i+1) - x_i)^2 + (y_(i+1) - y_i)^2) $
+This value is used for aggregating the total length of each segment class.
+
+*Segment Angle ($theta_i$):* The angle of the segment relative to the horizontal build plate.
+$ theta_i = op("atan2")(y_(i+1) - y_i, x_(i+1) - x_i) $
+The use of the two-argument arctangent (`atan2`) is critical. It correctly computes the angle in all four quadrants, producing an unambiguous result in radians from $-pi$ to $pi$ ($-180^degree$ to $180^degree$). This signed angle $theta_i$ is the primary feature for classification.
+
+== Formal Classification Ruleset
+The classification of each segment $S_i$ is based on physically-grounded angular thresholds derived from the FFF process. We define two key thresholds:
+- *$theta_H$ (Horizontal Tolerance):* A small angle (e.g., $5^degree$ to $10^degree$) to account for process variability and deviation from a perfect horizontal.
+- *$theta_C$ (Critical Overhang Angle):* The physical threshold for self-support, (e.g., $45^degree$). Angles shallower than this are "overhangs," while angles steeper are "self-supporting".
+
+Using the calculated angle $theta_i$ (in degrees) for each segment, we apply the following ruleset to directly classify each segment according to the classes specified in the research outline:
+
+*Horizontal_Interlock_Surface*
+- Mathematical Rule: $|theta_i| <= theta_H$ (e.g., $|theta_i| <= 10^degree$)
+- Physical Interpretation: A (near) horizontal segment, representing the flat top or bottom of an interlocking "tooth" (see Image 2). This is the primary site for thermal diffusion bonding.
+
+*Adhesion_Interface_Closing (Steep/Side Contact)*
+- Mathematical Rule: $|theta_i| > theta_C$ (e.g., $|theta_i| > 45^degree$)
+- Physical Interpretation: A steep, self-supporting side-wall of the interlocking "tooth." This surface provides lateral constraint and contributes primarily to interfacial shear strength.
+
+*Adhesion_Interface_Opening_Upper (Overhang Surface)*
+- Mathematical Rule: $theta_H < theta_i <= theta_C$ (e.g., $10^degree < theta_i <= 45^degree$)
+- Physical Interpretation: A low-angle "upper" overhang. This segment rests on the opposing material below it, forming the upper "hook" of the mechanical interlock. It is a primary surface for mechanical interlocking against Z-axis (vertical) pull-out.
+
+*Adhesion_Interface_Opening_Lower (Overhang Surface)*
+- Mathematical Rule: $-theta_C <= theta_i < -theta_H$ (e.g., $-45^degree <= theta_i < -10^degree$)
+- Physical Interpretation: A low-angle "lower" overhang. This segment forms the "valley" or "socket" that supports an upper hook. It also contributes to mechanical interlocking.
+
+== Derivation of Segmental Parameters
+This classification directly enables the parametric modeling ("参数建模") of the interface. The key parameters are the aggregate lengths of each segment class, as requested in the research objective to "count the total length for each types of segments":
+
+*Total Horizontal Length ($L_("Horizontal")$):*
+$ L_("Horizontal") = sum L(S_i) quad forall S_i in "Horizontal_Interlock_Surface" $
+
+*Total Closing Length ($L_("Closing")$):*
+$ L_("Closing") = sum L(S_i) quad forall S_i in "Adhesion_Interface_Closing" $
+
+*Total Upper Opening Length ($L_("Opening, U")$):*
+$ L_("Opening, U") = sum L(S_i) quad forall S_i in "Adhesion_Interface_Opening_Upper" $
+
+*Total Lower Opening Length ($L_("Opening, L")$):*
+$ L_("Opening, L") = sum L(S_i) quad forall S_i in "Adhesion_Interface_Opening_Lower" $
+
+These four parameters ($L_("Horizontal"), L_("Closing"), L_("Opening, U"), L_("Opening, L")$) form the core of the parametric model, quantifying the geometry of the microstructure based on the specified classes.
+
+= Derivation of Aggregate Geometric Descriptors for PSP Modeling
+With the segmental parameters from Section III.3 and the full polyline $L$ from Section II.3, we can compute the high-level aggregate geometric descriptors specified in the research outline.
+
+== Descriptor 1: Surface Area Enhancement Factor (SAEF)
+*Definition:* Quantifies the total increase in interfacial contact area created by the topology, relative to a perfectly flat, projected interface. This is a common metric in surface topography analysis.
+
+*Formulation:*
+- Calculate Total Interface Arc Length: $L_("total") = L_("Horizontal") + L_("Closing") + L_("Opening, U") + L_("Opening, L")$
+- Calculate Projected Horizontal Length: $L_("projected") = |x_n - x_0|$ (the horizontal distance between the start and end of the interface polyline $L$).
+$"SAEF" = L_("total") / L_("projected") $
+
+*Interpretation:* A perfectly flat, horizontal interface has $"SAEF" = 1.0$. The "toothy" topology in Image 2 will have $"SAEF" > 1.0$.
+*PSP Hypothesis:* $"SAEF"$ serves as a proxy for the total potential for chemical/diffusion bonding. It is hypothesized that this variable will be a strong predictor for interfacial strength, particularly in shear.
+
+== Descriptor 2: Mechanical Interlocking Depth (MID)
+*Definition:* Measures the peak-to-valley vertical amplitude of the interlocking topology.
+*Formulation:*
+- Collect all y-coordinates from the vertices of the entire polyline $L$: $Y = {y_0, y_1, dots, y_n}$.
+$"MID" = max(Y) - min(Y) $
+*Interpretation:* This is the "amplitude" of the interface wave.
+*PSP Hypothesis:* $"MID"$ directly quantifies the depth of the mechanical interlock. It is hypothesized to be a primary driver of Z-axis pull-out resistance. A deeper interlock should provide greater mechanical arresting of crack propagation and delamination.
+
+== Descriptor 3: Volumetric (Areal) Interlock Ratio (VIR)
+*Definition:* This is the most sophisticated descriptor, designed to quantify the "geometric overlap" and "interlocking distance". It measures the 2D cross-sectional area of material that is geometrically "locked" within the convex hull of the opposing material.
+
+*Formulation (Proposed Algorithm):*
++ *Define Baseline:* Establish a vertical baseline $B$ that represents the "average" interface plane. A robust definition for $B$ is the line $x = x_("base")$, where $x_("base") = 1/(n+1) sum_(i=0)^(n) x_i$ (the mean x-coordinate of all vertices).
++ *Identify Interlocking Polygons:* The interface polyline $L$ will weave across this baseline $B$. The regions enclosed by $L$ and $B$ represent the interlocking "teeth" and "valleys".
++ *Calculate Polygon Areas:* The Shoelace Formula (also known as Gauss's area formula or the Surveyor's formula) is the standard and most efficient algorithm for calculating the area of these (potentially complex) enclosed polygons from their vertices.
+  For a closed polygon with $k$ vertices $(x_1, y_1), dots, (x_k, y_k)$ ordered counter-clockwise, the area $A$ is:
+  $ A = 1/2 | sum_(i=1)^(k) (x_i y_(i+1) - x_(i+1) y_i) | $
+  (where $(x_(k+1), y_(k+1)) = (x_1, y_1)$).
+
+*VIR Calculation:*
+a. Algorithmically find all intersection points between the polyline $L$ and the baseline $B$.
+b. Use these intersection points and the original vertices of $L$ to define the set of $k$ closed, simple polygons $"Poly"_1, dots, "Poly"_k$ that represent the interlocking regions.
+c. Calculate the area $A_j = "Area"("Poly"_j)$ for each polygon using the Shoelace formula.
+d. Calculate Total Interlock Area: $A_("interlock") = sum_(j=1)^(k) A_j$.
+e. Calculate Bounding Box Area: $A_("bbox") = L_("projected") times "MID"$.
+f. $"VIR" = A_("interlock") / A_("bbox")$
+
+*Interpretation:* The research outline lists both MID and VIR as necessary descriptors. This is appropriate: a deep, thin "spike" (high MID, low VIR) would be mechanically weak and fracture easily. A deep, wide "dovetail" (high MID, high VIR) would be far stronger. $"MID"$ captures the amplitude of the interlock, while $"VIR"$ captures its shape, volume, and efficiency.
+*PSP Hypothesis:* $"VIR"$ is a more complete descriptor of mechanical interlocking than $"MID"$ alone. It is hypothesized that $"VIR"$ will be one of the strongest predictors of tensile strength, as it directly models the "interlocking distance" and volume of material engaged in resisting fracture.
+
+= A Predictive Model for Interfacial Strength: Integrating Structure and Process
+This section synthesizes all previous components into the final Process-Structure-Property (PSP) model, as specified in the research objective. This model will predict the Tensile_Strength (Property) using both the controllable Process parameters and the derived Structure descriptors.
+
+== PSP Model Variable Definitions
+A robust predictive model requires a well-defined set of independent (predictor) and dependent (response) variables. Table 1 serves as the "data dictionary" for the complete experiment, mapping the inputs and outputs of the PSP framework.
+
+#figure(
+  table(
+    columns: 5,
+    align: (left, left, center, left, left),
+    table.header(
+      [*Category*], [*Variable*], [*Symbol*], [*Definition / Formulation*], [*Source / Method*]
+    ),
+    // Process Group
+    table.cell(rowspan: 5)[*Process*\ (Predictor)],
+    [Print Speed], [$v_p$], [Nozzle travel speed (mm/s).], [Machine Setting],
+    [Bonding Interval], [$t_b$], [Time between adjacent material depositions (s).], [Machine Setting],
+    [Overlap Distance], [$d_o$], [Programmed horizontal overlap (mm).], [Machine Setting],
+    [Extrusion Multiplier], [$E_m$], [Volumetric extrusion factor (%).], [Machine Setting],
+    [Cooling Rate], [$d T / d t$], [Measured cooling rate at the interface (K/s).], [Thermal Imaging],
+
+    // Structure (Aggregate) Group
+    table.cell(rowspan: 3)[*Structure*\ (Aggregate Predictor)],
+    [Surface Area Enhance. Factor], [$"SAEF"$], [$L_("total") / L_("projected")$], [Sec 4.1 (from Polyline)],
+    [Mechanical Interlocking Depth], [$"MID"$], [$max(Y) - min(Y)$], [Sec 4.2 (from Polyline)],
+    [Volumetric (Areal) Interlock Ratio], [$"VIR"$], [$A_("interlock") / A_("bbox")$], [Sec 4.3 (from Polyline)],
+
+    // Structure (Segmental) Group
+    table.cell(rowspan: 4)[*Structure*\ (Segmental Predictor)],
+    [Total Horizontal Length], [$L_("Horizontal")$], [$sum L(S_i)$ for Horizontal class.], [Sec 3.3 (from Polyline)],
+    [Total Closing Length], [$L_("Closing")$], [$sum L(S_i)$ for Closing class.], [Sec 3.3 (from Polyline)],
+    [Total Upper Opening Length], [$L_("Opening, U")$], [$sum L(S_i)$ for Opening\_Upper class.], [Sec 3.3 (from Polyline)],
+    [Total Lower Opening Length], [$L_("Opening, L")$], [$sum L(S_i)$ for Opening\_Lower class.], [Sec 3.3 (from Polyline)],
+
+    // Property Group
+    table.cell(rowspan: 1)[*Property*\ (Response)],
+    [Tensile Strength], [$sigma_T$], [Max tensile stress at failure (MPa).], [Tensile Test],
+  ),
+  caption: [Table 1. Process-Structure-Property (PSP) Model Variable Definitions]
+)
+
+This data structure, by including both aggregate (SAEF, MID, VIR) and segmental ($L_("Horizontal"), L_("Opening, U")$, etc.) descriptors, allows the model to answer highly specific research questions (e.g., "Is overall strength more correlated with total horizontal bonding area, $L_("Horizontal")$, or the mechanical hook length, $L_("Opening, U")$?").
+
+== Recommended Analytical Model: Beyond Linear Regression
+While standard Multivariate Linear Regression (MLR) is a valid starting point, the physical relationships in FFF are known to be highly complex and non-linear. For example, the effect of Print_Speed on bond quality is non-linear and heavily interacts with thermal parameters.
+
+A more powerful and appropriate approach is to use tree-based ensemble models, such as Random Forest (RF) or Gradient Boosting (e.g., XGBoost).
+
+*Justification:*
+- *Non-Linearity:* These models excel at capturing complex, non-linear relationships and thresholds without requiring a priori definition of polynomial terms.
+- *Interaction Handling:* They automatically model high-order interaction effects between variables (e.g., the combination of high $"MID"$ and a high $"Cooling Rate"$ may have a unique, synergistic effect on $sigma_T$).
+- *Robustness:* They are robust to multicollinearity, which is expected in this dataset (e.t., $"MID"$ and $"VIR"$ will likely be correlated).
+- *Proven Efficacy:* These models (RF, XGBoost) have demonstrated high accuracy (e.g., $R^2 > 0.9$) in predicting the mechanical properties of 3D printed parts from process parameters.
+
+== The Key Output: Feature Importance Analysis
+The most valuable output of this modeling approach—directly addressing the stated "lack of understanding"—is not just its predictive accuracy, but its ability to compute Feature Importance.
+
+After training the Random Forest model on the database (defined in Table 1), it can quantitatively rank all independent variables (both Process and Structure) by their contribution to the model's predictive accuracy. This analysis will provide a direct, quantitative answer to the central research question by identifying which features matter most. It will reveal, for example, whether interfacial strength is dominated by the $"VIR"$ (a structural feature), by the $L_("Horizontal")$ (a bonding feature), or by a $"Bonding Interva"l$ (a process parameter). This analysis provides the scientific "understanding" that the research is seeking.
+
+= Recommendations for Implementation and Experimental Validation
+
+== Proposed Computational Toolkit (Python-based)
+This entire analytical framework can be implemented using a stack of open-source Python libraries:
+- *Image Segmentation (U-Net):* PyTorch or TensorFlow/Keras.
+- *Image Processing & Contouring:* OpenCV and scikit-image.
+- *Computational Geometry:* Shapely. This library is ideal, providing built-in, optimized functions for RDP simplification (`polygon.simplify(epsilon)`) and all necessary polygon operations (intersections, area calculations).
+- *PSP Modeling (RF/XGBoost):* scikit-learn. This is the standard for machine learning, containing robust, well-documented implementations of Random Forest, regression metrics, and feature importance analysis.
+- *Advanced Shape Analysis:* For future work, scikit-shapes could be explored for more advanced 3D shape registration and analysis.
+
+== Experimental Validation Protocol
+The following protocol details the research loop required to build and validate the proposed PSP model:
++ *Fabricate (Process):* Define a Design of Experiments (DoE). Fabricate tensile specimens by systematically varying both the programmed topology (e.g., triangular, sine, square, varying amplitude and wavelength) and the key Process parameters (Overlap_Distance, Bonding_Interval, Print_Speed).
++ *Test (Property):* Conduct standard tensile tests (e.g., ASTM D638) on all samples to acquire the Tensile_Strength ($sigma_T$) response variable.
++ *Image (Structure):* For each tested sample, perform cross-sectioning and microscopic imaging (as in Image 2) to capture the as-built interfacial topology.
++ *Extract (Structure):* Apply the U-Net segmentation (Sec 2.1), `cv2.findContours` (Sec 2.2), and RDP simplification (Sec 2.3) to all micrographs to generate the simplified polylines ($L$).
++ *Calculate (Structure):* Batch-process all polylines using the classification model (Sec 3.2) and parameter/descriptor calculations (Sec 3.3 & Sec IV) to compute the full set of Structure features.
++ *Build Database:* Collate all Process, Structure, and Property data into a single master table (as defined in Table 1).
++ *Train & Analyze (PSP):* Train the Random Forest (or XGBoost) model (Sec V) on the database to predict $sigma_T$.
++ *Analyze Results:* Generate the Feature Importance plot (Sec 5.3) to identify the key drivers of interfacial strength.

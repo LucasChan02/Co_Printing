@@ -18,7 +18,7 @@ def contact_boundary_detection_rgb(
     denoise_h_color: float = 3.0,
     denoise_template_window_size: int = 7,
     denoise_search_window_size: int = 21,
-    visualize: bool = False,
+    visualize: bool = True,
 ) -> Union[List[tuple], Tuple[List[tuple], np.ndarray, np.ndarray]]:
     """
     Detects the contact boundary between two materials in a single image.
