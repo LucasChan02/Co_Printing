@@ -7,8 +7,8 @@ from image_output import save_csv_data, save_visualization_images
 
 if __name__ == "__main__":
     CWD = os.path.dirname(os.path.realpath(__file__))
-    IMAGE_DIR = os.path.join(CWD, "..", "Micro/4x")
-    OUTPUT_DIR = os.path.join(IMAGE_DIR, "processed_images_split")
+    IMAGE_DIR = os.path.join(CWD, "..", "Micro/cap_1113")
+    OUTPUT_DIR = os.path.join(IMAGE_DIR, "processed_split_1113")
 
     # --- Processing Parameters ---
     PIXEL_TO_MICRON = 1.13636
@@ -16,13 +16,13 @@ if __name__ == "__main__":
         "approx_epsilon_factor": 0.0035,
         "min_segment_len": 80,
         "max_segment_len": 600,
-        "red_channel_thresh_g": 23,
-        "morph_kernel_size_g": (6, 6),
-        "red_channel_thresh_w": 22,
-        "morph_kernel_size_w": (3, 3),
-        "contact_distance_threshold": 40,
-        "denoise_h": 5.0,
-        "denoise_h_color": 3.0,
+        "red_channel_thresh_g": 65,
+        "morph_kernel_size_g": (15, 15),
+        "red_channel_thresh_w": 80,
+        "morph_kernel_size_w": (15, 15),
+        "contact_distance_threshold": 100,
+        "denoise_h": 15.0,
+        "denoise_h_color": 10.0,
         "denoise_template_window_size": 9,
         "denoise_search_window_size": 27,
     }

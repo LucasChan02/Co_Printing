@@ -8,14 +8,14 @@ from boundary_detection_rgb import contact_boundary_detection_rgb
 from image_output import display_images
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Run contact_boundary_detection_rgb on a single image for testing with display enabled."
-    )
-    parser.add_argument("image_path", help="Path to the image file.")
-    args = parser.parse_args()
+    CWD = os.path.dirname(os.path.realpath(__file__))
+    IMAGE_DIR = os.path.join(CWD, "..", "Micro/cap_1113")
+    FILENAME = "slo_40_01_0002.png"  # TODO: Update this filename to the image you want to test
+    
+    image_path = os.path.join(IMAGE_DIR, FILENAME)
 
-    if not os.path.isfile(args.image_path):
-        print(f"Error: File not found at '{args.image_path}'")
+    if not os.path.isfile(image_path):
+        print(f"Error: File not found at '{image_path}'")
         exit(1)
 
     # --- Processing Parameters for Testing ---
@@ -24,26 +24,26 @@ if __name__ == "__main__":
         "approx_epsilon_factor": 0.0035,
         "min_segment_len": 80,
         "max_segment_len": 600,
-        "red_channel_thresh_g": 23,
-        "morph_kernel_size_g": (6, 6),
-        "red_channel_thresh_w": 22,
-        "morph_kernel_size_w": (3, 3),
-        "contact_distance_threshold": 40,
-        "denoise_h": 5.0,
-        "denoise_h_color": 3.0,
+        "red_channel_thresh_g": 65,
+        "morph_kernel_size_g": (15, 15),
+        "red_channel_thresh_w": 80,
+        "morph_kernel_size_w": (15, 15),
+        "contact_distance_threshold": 100,
+        "denoise_h": 15.0,
+        "denoise_h_color": 10.0,
         "denoise_template_window_size": 9,
         "denoise_search_window_size": 27,
     }
     # --- End of Parameters ---
 
     # Load the image
-    img = cv2.imread(args.image_path)
+    img = cv2.imread(image_path)
     if img is None:
-        print(f"Error: Could not read image from '{args.image_path}'")
+        print(f"Error: Could not read image from '{image_path}'")
         exit(1)
 
     print("--- Single Image Test ---")
-    print(f"Processing: {args.image_path}")
+    print(f"Processing: {image_path}")
     print("-" * 30)
 
     # Run the processing function on the single image with visualization enabled

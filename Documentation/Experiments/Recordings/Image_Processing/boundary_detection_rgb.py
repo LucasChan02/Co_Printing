@@ -97,15 +97,43 @@ def contact_boundary_detection_rgb(
 
             mid_g = (p1_g + p2_g) / 2
             min_dist = float("inf")
+            best_seg_w = None
 
             for seg_w in segments_w:
                 mid_w = (seg_w[0] + seg_w[1]) / 2
                 dist = np.linalg.norm(mid_g - mid_w)
                 if dist < min_dist:
                     min_dist = dist
+                    best_seg_w = seg_w
 
-            if min_dist < contact_distance_threshold:
-                contact_segments.append((p2_g, p1_g))
+            if min_dist < contact_distance_threshold and best_seg_w is not None:
+                # Interpolate between the Green segment and the closest White segment
+                p1_w, p2_w = best_seg_w
+                
+                # 1. Align directions
+                vec_g = p2_g - p1_g
+                vec_w = p2_w - p1_w
+                
+                # Check dot product to see if segments are antiparallel
+                dot_prod = np.dot(vec_g, vec_w)
+                
+                if dot_prod < 0:
+                    # Flip white segment points for interpolation if they run in opposite directions
+                    p1_w_aligned = p2_w
+                    p2_w_aligned = p1_w
+                else:
+                    p1_w_aligned = p1_w
+                    p2_w_aligned = p2_w
+                
+                # 2. Average the coordinates
+                p1_avg = (p1_g.astype(np.float32) + p1_w_aligned.astype(np.float32)) / 2.0
+                p2_avg = (p2_g.astype(np.float32) + p2_w_aligned.astype(np.float32)) / 2.0
+                
+                # Convert back to int for cv2 drawing compatibility (optional, but good for pixels)
+                p1_avg_int = p1_avg.astype(np.int32)
+                p2_avg_int = p2_avg.astype(np.int32)
+
+                contact_segments.append((p1_avg_int, p2_avg_int))
 
     # Sort segments from top to bottom
     contact_segments.sort(key=lambda seg: (seg[0][1] + seg[1][1]) / 2)

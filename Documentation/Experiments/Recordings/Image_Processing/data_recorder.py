@@ -1,4 +1,5 @@
 import csv
+import os
 
 import numpy as np
 
@@ -21,7 +22,8 @@ def save_contact_data(
         csv_writer = csv.writer(csvfile)
         csv_writer.writerow(
             [
-                "image_filename",
+                "specimen_name",
+                "scan_number",
                 "segment_index",
                 "start_x",
                 "start_y",
@@ -33,8 +35,18 @@ def save_contact_data(
         )
 
         for filename, segments in all_image_data.items():
+            # Parse filename
+            name_no_ext = os.path.splitext(filename)[0]
+            parts = name_no_ext.rsplit('_', 1)
+            if len(parts) == 2:
+                specimen_name = parts[0]
+                scan_number = parts[1]
+            else:
+                specimen_name = name_no_ext
+                scan_number = "unknown"
+
             if not segments:
-                csv_writer.writerow([filename, "N/A", "N/A", "N/A", "N/A", "N/A", 0, 0])
+                csv_writer.writerow([specimen_name, scan_number, "N/A", "N/A", "N/A", "N/A", "N/A", 0, 0])
             else:
                 for i, segment in enumerate(segments):
                     p1, p2 = segment
@@ -42,7 +54,8 @@ def save_contact_data(
                     length_microns = length_pixels * pixel_to_micron
                     csv_writer.writerow(
                         [
-                            filename,
+                            specimen_name,
+                            scan_number,
                             i,
                             p1[0],
                             p1[1],
@@ -70,15 +83,26 @@ def save_summary_data(
         csv_writer = csv.writer(csvfile)
         csv_writer.writerow(
             [
-                "image_filename",
+                "specimen_name",
+                "scan_number",
                 "total_contact_length_microns",
                 "total_contact_length_mm",
             ]
         )
         for filename, segments in all_image_data.items():
+            # Parse filename
+            name_no_ext = os.path.splitext(filename)[0]
+            parts = name_no_ext.rsplit('_', 1)
+            if len(parts) == 2:
+                specimen_name = parts[0]
+                scan_number = parts[1]
+            else:
+                specimen_name = name_no_ext
+                scan_number = "unknown"
+
             total_contact_length_pixels = sum(
                 np.linalg.norm(p1 - p2) for p1, p2 in segments
             )
             length_microns = total_contact_length_pixels * pixel_to_micron
             length_mm = length_microns / 1000
-            csv_writer.writerow([filename, f"{length_microns:.4f}", f"{length_mm:.4f}"])
+            csv_writer.writerow([specimen_name, scan_number, f"{length_microns:.4f}", f"{length_mm:.4f}"])

@@ -73,9 +73,12 @@ def save_csv_data(output_dir, all_image_data, pixel_to_micron):
         print("No data to save.")
         return
 
+    first_filename = next(iter(all_image_data.keys()))
+    specimen_name = os.path.splitext(first_filename)[0].rsplit('_', 1)[0]
+    
     # Define paths for the new CSV output files
-    detailed_csv_path = os.path.join(output_dir, "contact_segments_detailed.csv")
-    summary_csv_path = os.path.join(output_dir, "contact_lengths_summary.csv")
+    detailed_csv_path = os.path.join(output_dir, f"{specimen_name}_contact_segments.csv")
+    summary_csv_path = os.path.join(output_dir, f"{specimen_name}_contact_summary.csv")
 
     print(f"Saving detailed segment data to {detailed_csv_path}")
     save_contact_data(detailed_csv_path, all_image_data, pixel_to_micron)
