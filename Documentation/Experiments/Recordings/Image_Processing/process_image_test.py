@@ -56,6 +56,23 @@ if __name__ == "__main__":
         print(f"  Segment {i}: Start({p1[0]}, {p1[1]}), End({p2[0]}, {p2[1]})")
 
     print("-" * 30)
+    
+    # Calculate Geometric Descriptors
+    PIXEL_TO_MICRON = 1.13636
+    from descriptor_analysis import calculate_descriptors
+    descriptors = calculate_descriptors(contact_segments, PIXEL_TO_MICRON)
+    
+    print("\n--- Segment Statistics (mm) ---")
+    print(f"Total CAT_HORIZONTAL Length: {descriptors['CAT_HORIZONTAL_len_mm']:.4f}")
+    print(f"Total CAT_CLOSING Length: {descriptors['CAT_CLOSING_len_mm']:.4f}")
+    print(f"Total CAT_OPENING_UPPER Length: {descriptors['CAT_OPENING_UPPER_len_mm']:.4f}")
+    print(f"Total CAT_OPENING_LOWER Length: {descriptors['CAT_OPENING_LOWER_len_mm']:.4f}")
+    
+    print("\n--- Geometric Descriptors ---")
+    print(f"SAEF: {descriptors['SAEF']:.4f}")
+    print(f"MID: {descriptors['MID_mm']:.4f} mm")
+    print(f"VIR: {descriptors['VIR']:.4f}")
+    print("-" * 30)
 
     # Display images
     display_images(contours_img, lines_img)

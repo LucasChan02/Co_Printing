@@ -5,6 +5,8 @@ import cv2
 from boundary_detection_rgb import contact_boundary_detection_rgb
 from image_output import save_csv_data, save_visualization_images
 
+from descriptor_analysis import calculate_descriptors
+
 if __name__ == "__main__":
     CWD = os.path.dirname(os.path.realpath(__file__))
     IMAGE_DIR = os.path.join(CWD, "..", "Micro/cap_1113")
@@ -15,12 +17,12 @@ if __name__ == "__main__":
     PARAMS = {
         "approx_epsilon_factor": 0.0035,
         "min_segment_len": 80,
-        "max_segment_len": 600,
+        "max_segment_len": 900,
         "red_channel_thresh_g": 65,
         "morph_kernel_size_g": (15, 15),
         "red_channel_thresh_w": 80,
         "morph_kernel_size_w": (15, 15),
-        "contact_distance_threshold": 100,
+        "contact_distance_threshold": 140,
         "denoise_h": 15.0,
         "denoise_h_color": 10.0,
         "denoise_template_window_size": 9,
@@ -53,7 +55,14 @@ if __name__ == "__main__":
         result = contact_boundary_detection_rgb(img=img, visualize=True, **PARAMS)
         contact_segments, contours_img, lines_img = result
 
-        all_image_data[filename] = contact_segments
+        # Calculate Geometric Descriptors
+        descriptors = calculate_descriptors(contact_segments, PIXEL_TO_MICRON)
+        
+        # Store both segments and descriptors
+        all_image_data[filename] = {
+            "segments": contact_segments,
+            "descriptors": descriptors
+        }
 
         # Save the visualization images using the new output function
         save_visualization_images(OUTPUT_DIR, filename, contours_img, lines_img)

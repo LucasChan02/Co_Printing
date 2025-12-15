@@ -31,10 +31,19 @@ def save_contact_data(
                 "end_y",
                 "length_pixels",
                 "length_microns",
+                "angle_degrees",
             ]
         )
 
-        for filename, segments in all_image_data.items():
+        for filename, data_dict in all_image_data.items():
+            # Handle new data structure
+            if isinstance(data_dict, dict) and "segments" in data_dict:
+                segments = data_dict["segments"]
+                descriptors = data_dict.get("descriptors")
+            else:
+                segments = data_dict
+                descriptors = None
+            
             # Parse filename
             name_no_ext = os.path.splitext(filename)[0]
             parts = name_no_ext.rsplit('_', 1)
@@ -46,12 +55,21 @@ def save_contact_data(
                 scan_number = "unknown"
 
             if not segments:
-                csv_writer.writerow([specimen_name, scan_number, "N/A", "N/A", "N/A", "N/A", "N/A", 0, 0])
+                csv_writer.writerow([specimen_name, scan_number, "N/A", "N/A", "N/A", "N/A", "N/A", 0, 0, "N/A"])
             else:
+                # If we have descriptors with categorized segments, use that to get angle
+                categorized = descriptors.get("categorized_segments") if descriptors else None
+                
                 for i, segment in enumerate(segments):
                     p1, p2 = segment
                     length_pixels = np.linalg.norm(p1 - p2)
                     length_microns = length_pixels * pixel_to_micron
+                    
+                    angle_val = "N/A"
+                    if categorized and i < len(categorized):
+                        # Assuming 1-to-1 ordered correspondence
+                        angle_val = f"{categorized[i]['angle']:.2f}"
+                        
                     csv_writer.writerow(
                         [
                             specimen_name,
@@ -63,6 +81,7 @@ def save_contact_data(
                             p2[1],
                             f"{length_pixels:.4f}",
                             f"{length_microns:.4f}",
+                            angle_val,
                         ]
                     )
 
@@ -87,9 +106,23 @@ def save_summary_data(
                 "scan_number",
                 "total_contact_length_microns",
                 "total_contact_length_mm",
+                "SAEF",
+                "MID_mm",
+                "VIR",
+                "CAT_HORIZONTAL_len_mm",
+                "CAT_CLOSING_len_mm",
+                "CAT_OPENING_UPPER_len_mm",
+                "CAT_OPENING_LOWER_len_mm",
             ]
         )
-        for filename, segments in all_image_data.items():
+        for filename, data_dict in all_image_data.items():
+            # Handle new data structure
+            if isinstance(data_dict, dict) and "segments" in data_dict:
+                segments = data_dict["segments"]
+                descriptors = data_dict["descriptors"]
+            else:
+                segments = data_dict
+                descriptors = None
             # Parse filename
             name_no_ext = os.path.splitext(filename)[0]
             parts = name_no_ext.rsplit('_', 1)
@@ -105,4 +138,18 @@ def save_summary_data(
             )
             length_microns = total_contact_length_pixels * pixel_to_micron
             length_mm = length_microns / 1000
-            csv_writer.writerow([specimen_name, scan_number, f"{length_microns:.4f}", f"{length_mm:.4f}"])
+            csv_writer.writerow(
+                [
+                    specimen_name,
+                    scan_number,
+                    f"{length_microns:.4f}",
+                    f"{length_mm:.4f}",
+                    f"{descriptors['SAEF']:.4f}" if descriptors else "0.0",
+                    f"{descriptors['MID_mm']:.4f}" if descriptors else "0.0",
+                    f"{descriptors['VIR']:.4f}" if descriptors else "0.0",
+                    f"{descriptors['CAT_HORIZONTAL_len_mm']:.4f}" if descriptors else "0.0",
+                    f"{descriptors['CAT_CLOSING_len_mm']:.4f}" if descriptors else "0.0",
+                    f"{descriptors['CAT_OPENING_UPPER_len_mm']:.4f}" if descriptors else "0.0",
+                    f"{descriptors['CAT_OPENING_LOWER_len_mm']:.4f}" if descriptors else "0.0",
+                ]
+            )

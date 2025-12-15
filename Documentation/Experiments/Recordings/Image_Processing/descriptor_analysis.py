@@ -167,6 +167,69 @@ def analyze_image(image_path, visualize=True):
     print(f"Found {len(contact_segments)} segments.")
     
     # --- Categorization and Statistics ---
+    descriptors = calculate_descriptors(contact_segments, PIXEL_TO_MICRON)
+    
+    # --- Output Results ---
+    print("\n--- Segment Statistics (mm) ---")
+    print(f"Total CAT_HORIZONTAL Length: {descriptors['CAT_HORIZONTAL_len_mm']:.4f}")
+    print(f"Total CAT_CLOSING Length: {descriptors['CAT_CLOSING_len_mm']:.4f}")
+    print(f"Total CAT_OPENING_UPPER Length: {descriptors['CAT_OPENING_UPPER_len_mm']:.4f}")
+    print(f"Total CAT_OPENING_LOWER Length: {descriptors['CAT_OPENING_LOWER_len_mm']:.4f}")
+    
+    print("\n--- Geometric Descriptors ---")
+    print(f"SAEF: {descriptors['SAEF']:.4f}")
+    print(f"MID: {descriptors['MID_mm']:.4f} mm")
+    print(f"VIR: {descriptors['VIR']:.4f}")
+
+    if visualize:
+        # Re-create visualization using the segments (optional: could move vis logic to function too, but keeping simple)
+        colors = {
+            CAT_HORIZONTAL: (255, 0, 0),       # Blue
+            CAT_CLOSING: (0, 0, 255),         # Red
+            CAT_OPENING_UPPER: (0, 255, 0),   # Green
+            CAT_OPENING_LOWER: (0, 255, 255), # Yellow
+            CAT_UNCLASSIFIED: (128, 128, 128) # Gray
+        }
+        
+        vis_img = img.copy()
+        for i, segment in enumerate(descriptors['categorized_segments']):
+            p1 = segment['p1']
+            p2 = segment['p2']
+            category = segment['category']
+            
+            color = colors.get(category, (255, 255, 255))
+            cv2.line(vis_img, tuple(p1), tuple(p2), color, 2)
+            cv2.circle(vis_img, tuple(p1), 3, color, -1)
+            
+            mid_point = (p1 + p2) / 2
+            mid_point_int = (int(mid_point[0]), int(mid_point[1]))
+            # label = str(category)
+            # font = cv2.FONT_HERSHEY_SIMPLEX
+            # cv2.putText(vis_img, label, mid_point_int, font, 1.8, (0, 0, 0), 4, cv2.LINE_AA)
+            # cv2.putText(vis_img, label, mid_point_int, font, 1.8, (255, 255, 255), 2, cv2.LINE_AA)
+
+        display_scale_factor = 1.5
+        base_display_width = 768
+        base_display_height = 512
+        vis_img_resized = cv2.resize(vis_img, (int(base_display_width * display_scale_factor), int(base_display_height * display_scale_factor)))
+        cv2.imshow("Strength Aware Analysis", vis_img_resized)
+        print("\nPress any key to close the visualization window...")
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+def calculate_descriptors(contact_segments, pixel_to_micron):
+    """
+    Calculates geometric descriptors from contact segments.
+    
+    Args:
+        contact_segments: List of tuples [(p1, p2), ...]
+        pixel_to_micron: Fixed conversion factor.
+        
+    Returns:
+        dict: Dictionary of descriptors and stats.
+    """
+    pixel_to_mm = pixel_to_micron * MICRON_TO_MM
+    
     stats = {
         CAT_HORIZONTAL: 0.0,
         CAT_CLOSING: 0.0,
@@ -175,23 +238,12 @@ def analyze_image(image_path, visualize=True):
         CAT_UNCLASSIFIED: 0.0
     }
     
-    # Colors for visualization (BGR)
-    colors = {
-        CAT_HORIZONTAL: (255, 0, 0),       # Blue
-        CAT_CLOSING: (0, 0, 255),         # Red
-        CAT_OPENING_UPPER: (0, 255, 0),   # Green
-        CAT_OPENING_LOWER: (0, 255, 255), # Yellow
-        CAT_UNCLASSIFIED: (128, 128, 128) # Gray
-    }
-    
-    vis_img = img.copy() if visualize else None
-    
     categorized_segments = []
     
     for p1, p2 in contact_segments:
         category, angle = classify_segment(p1, p2)
         length_px = np.linalg.norm(p2 - p1)
-        length_mm = length_px * PIXEL_TO_MM
+        length_mm = length_px * pixel_to_mm
         
         stats[category] += length_mm
         categorized_segments.append({
@@ -202,30 +254,9 @@ def analyze_image(image_path, visualize=True):
             "length_mm": length_mm
         })
         
-        if visualize:
-            color = colors.get(category, (255, 255, 255))
-            cv2.line(vis_img, tuple(p1), tuple(p2), color, 2)
-            # Draw start point to indicate direction
-            cv2.circle(vis_img, tuple(p1), 3, color, -1)
-            
-            # Draw Category Label
-            mid_point = (p1 + p2) / 2
-            mid_point_int = (int(mid_point[0]), int(mid_point[1]))
-            
-            label = str(category)
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            font_scale = 1.8
-            thickness = 2
-            
-            # Draw outline (Black)
-            cv2.putText(vis_img, label, mid_point_int, font, font_scale, (0, 0, 0), thickness + 2, cv2.LINE_AA)
-            # Draw text (White)
-            cv2.putText(vis_img, label, mid_point_int, font, font_scale, (255, 255, 255), thickness, cv2.LINE_AA)
-        
     # --- Descriptor Calculation ---
     
     # 1. SAEF (Surface Area Enhancement Factor)
-    # SAEF = L_total / L_projected
     l_total_mm = sum(stats.values())
     
     all_points = np.array([pt for seg in contact_segments for pt in seg])
@@ -233,39 +264,28 @@ def analyze_image(image_path, visualize=True):
     x_coords = all_points[:, 0]
     
     l_projected_px = np.max(y_coords) - np.min(y_coords) # Seam Length in Y (pixels)
-    l_projected_mm = l_projected_px * PIXEL_TO_MM
+    l_projected_mm = l_projected_px * pixel_to_mm
     
     saef = l_total_mm / l_projected_mm if l_projected_mm > 0 else 0
     
     # 2. MID (Mechanical Interlocking Depth)
     mid_val_px = np.max(x_coords) - np.min(x_coords) # Amplitude in X (pixels)
-    mid_val_mm = mid_val_px * PIXEL_TO_MM
+    mid_val_mm = mid_val_px * pixel_to_mm
     
     # 3. VIR (Volumetric Interlock Ratio)
     # VIR is a ratio of areas, so units cancel out. We can calculate in pixels.
     vir = calculate_vir(contact_segments, mid_val_px, l_projected_px)
     
-    # --- Output Results ---
-    print("\n--- Segment Statistics (mm) ---")
-    print(f"Total CAT_HORIZONTAL Length: {stats[CAT_HORIZONTAL]:.4f}")
-    print(f"Total CAT_CLOSING Length: {stats[CAT_CLOSING]:.4f}")
-    print(f"Total CAT_OPENING_UPPER Length: {stats[CAT_OPENING_UPPER]:.4f}")
-    print(f"Total CAT_OPENING_LOWER Length: {stats[CAT_OPENING_LOWER]:.4f}")
-    
-    print("\n--- Geometric Descriptors ---")
-    print(f"SAEF: {saef:.4f}")
-    print(f"MID: {mid_val_mm:.4f} mm")
-    print(f"VIR: {vir:.4f}")
-
-    if visualize:
-        display_scale_factor = 1.5
-        base_display_width = 768
-        base_display_height = 512
-        vis_img_resized = cv2.resize(vis_img, (int(base_display_width * display_scale_factor), int(base_display_height * display_scale_factor)))
-        cv2.imshow("Strength Aware Analysis", vis_img_resized)
-        print("\nPress any key to close the visualization window...")
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+    return {
+        "SAEF": saef,
+        "MID_mm": mid_val_mm,
+        "VIR": vir,
+        "CAT_HORIZONTAL_len_mm": stats[CAT_HORIZONTAL],
+        "CAT_CLOSING_len_mm": stats[CAT_CLOSING],
+        "CAT_OPENING_UPPER_len_mm": stats[CAT_OPENING_UPPER],
+        "CAT_OPENING_LOWER_len_mm": stats[CAT_OPENING_LOWER],
+        "categorized_segments": categorized_segments
+    }
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Analyze contact boundary segments.")
