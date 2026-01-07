@@ -9,8 +9,8 @@ from descriptor_analysis import calculate_descriptors
 
 if __name__ == "__main__":
     CWD = os.path.dirname(os.path.realpath(__file__))
-    IMAGE_DIR = os.path.join(CWD, "..", "Micro/cap_1113")
-    OUTPUT_DIR = os.path.join(IMAGE_DIR, "processed_split_1113")
+    IMAGE_DIR = os.path.join(CWD, "..", "Micro/cap_1218")
+    OUTPUT_DIR = os.path.join(IMAGE_DIR, "processed_split_1218")
 
     # --- Processing Parameters ---
     PIXEL_TO_MICRON = 1.13636
