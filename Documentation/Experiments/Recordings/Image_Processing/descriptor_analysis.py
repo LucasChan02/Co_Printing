@@ -256,6 +256,8 @@ def calculate_descriptors(contact_segments, pixel_to_micron):
         
     # --- Descriptor Calculation ---
     
+    # --- Descriptor Calculation ---
+    
     # 1. SAEF (Surface Area Enhancement Factor)
     l_total_mm = sum(stats.values())
     
@@ -263,18 +265,60 @@ def calculate_descriptors(contact_segments, pixel_to_micron):
     y_coords = all_points[:, 1]
     x_coords = all_points[:, 0]
     
-    l_projected_px = np.max(y_coords) - np.min(y_coords) # Seam Length in Y (pixels)
+    # --- Detrending for MID and VIR ---
+    # Fit a line x = m*y + c (treating y as independent var since seam is vertical-ish)
+    if len(y_coords) > 1:
+        # Polyfit returns [slope, intercept] for x = slope * y + intercept
+        slope, intercept = np.polyfit(y_coords, x_coords, 1)
+        
+        # Calculate trend line endpoints for visualization (clipped to min/max y)
+        y_min, y_max = np.min(y_coords), np.max(y_coords)
+        x_trend_min = slope * y_min + intercept
+        x_trend_max = slope * y_max + intercept
+        trend_line = [((x_trend_min, y_min), (x_trend_max, y_max))]
+        
+        # Calculate rotation angle to make the trend line vertical
+        # The trend line angle with vertical (Y-axis) is atan(slope)
+        # We want to rotate by -atan(slope)
+        rotation_angle = -math.atan(slope)
+        
+        # Rotate all points
+        # Center of rotation doesn't strictly matter for amplitude, but using centroid keeps numbers valid
+        centroid_x = np.mean(x_coords)
+        centroid_y = np.mean(y_coords)
+        centroid = np.array([centroid_x, centroid_y])
+        
+        rotated_segments = []
+        for p1, p2 in contact_segments:
+            p1_rot = rotate_point(p1, rotation_angle, centroid)
+            p2_rot = rotate_point(p2, rotation_angle, centroid)
+            rotated_segments.append((p1_rot, p2_rot))
+            
+        # Extract rotated coordinates for MID
+        all_points_rot = np.array([pt for seg in rotated_segments for pt in seg])
+        x_coords_rot = all_points_rot[:, 0]
+        y_coords_rot = all_points_rot[:, 1]
+        
+        mid_val_px = np.max(x_coords_rot) - np.min(x_coords_rot)
+        
+        # For SAEF projected length, use the length of the trend line in the original space
+        # Or simply the Y-range of the rotated points (height of the straightened seam)
+        l_projected_px = np.max(y_coords_rot) - np.min(y_coords_rot)
+        
+        # Recalculate VIR with rotated segments (now vertically aligned)
+        vir = calculate_vir(rotated_segments, mid_val_px, l_projected_px)
+        
+    else:
+        # Fallback for insufficient points
+        slope, intercept = 0, 0
+        trend_line = []
+        mid_val_px = np.max(x_coords) - np.min(x_coords) if len(x_coords) > 0 else 0
+        l_projected_px = np.max(y_coords) - np.min(y_coords) if len(y_coords) > 0 else 0
+        vir = calculate_vir(contact_segments, mid_val_px, l_projected_px)
+
     l_projected_mm = l_projected_px * pixel_to_mm
-    
-    saef = l_total_mm / l_projected_mm if l_projected_mm > 0 else 0
-    
-    # 2. MID (Mechanical Interlocking Depth)
-    mid_val_px = np.max(x_coords) - np.min(x_coords) # Amplitude in X (pixels)
     mid_val_mm = mid_val_px * pixel_to_mm
-    
-    # 3. VIR (Volumetric Interlock Ratio)
-    # VIR is a ratio of areas, so units cancel out. We can calculate in pixels.
-    vir = calculate_vir(contact_segments, mid_val_px, l_projected_px)
+    saef = l_total_mm / l_projected_mm if l_projected_mm > 0 else 0
     
     return {
         "SAEF": saef,
@@ -284,8 +328,27 @@ def calculate_descriptors(contact_segments, pixel_to_micron):
         "CAT_CLOSING_len_mm": stats[CAT_CLOSING],
         "CAT_OPENING_UPPER_len_mm": stats[CAT_OPENING_UPPER],
         "CAT_OPENING_LOWER_len_mm": stats[CAT_OPENING_LOWER],
-        "categorized_segments": categorized_segments
+        "categorized_segments": categorized_segments,
+        "trend_line": trend_line # List of ((x1,y1), (x2,y2)) tuples
     }
+
+def rotate_point(point, angle_rad, center):
+    """Rotates a point around a center."""
+    px, py = point
+    cx, cy = center
+    
+    # Translate to origin
+    tx, ty = px - cx, py - cy
+    
+    # Rotate
+    cos_a = math.cos(angle_rad)
+    sin_a = math.sin(angle_rad)
+    
+    rx = tx * cos_a - ty * sin_a
+    ry = tx * sin_a + ty * cos_a
+    
+    # Translate back
+    return np.array([rx + cx, ry + cy])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Analyze contact boundary segments.")

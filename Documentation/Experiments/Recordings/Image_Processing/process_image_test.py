@@ -9,10 +9,11 @@ from image_output import display_images
 
 if __name__ == "__main__":
     CWD = os.path.dirname(os.path.realpath(__file__))
-    IMAGE_DIR = os.path.join(CWD, "..", "Micro/cap_1113")
-    FILENAME = "slo_40_01_0002.png"  # TODO: Update this filename to the image you want to test
+    CWD = os.path.dirname(os.path.realpath(__file__))
+    # IMAGE_DIR = os.path.join(CWD, "..", "Micro/cap_1113")
+    FILENAME = "test_image.png"
     
-    image_path = os.path.join(IMAGE_DIR, FILENAME)
+    image_path = os.path.join(CWD, FILENAME)
 
     if not os.path.isfile(image_path):
         print(f"Error: File not found at '{image_path}'")
@@ -74,7 +75,9 @@ if __name__ == "__main__":
     print(f"VIR: {descriptors['VIR']:.4f}")
     print("-" * 30)
 
+    trend_line = descriptors.get("trend_line", [])
+
     # Display images
-    display_images(contours_img, lines_img)
+    display_images(contours_img, lines_img, trend_line=trend_line, draw_trend_line=True)
 
     print("Test complete.")

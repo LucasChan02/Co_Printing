@@ -63,9 +63,11 @@ if __name__ == "__main__":
             "segments": contact_segments,
             "descriptors": descriptors
         }
+        
+        trend_line = descriptors.get("trend_line", [])
 
         # Save the visualization images using the new output function
-        save_visualization_images(OUTPUT_DIR, filename, contours_img, lines_img)
+        save_visualization_images(OUTPUT_DIR, filename, contours_img, lines_img, trend_line=trend_line, draw_trend_line=True)
 
     # After processing all images, save the data to CSV files
     save_csv_data(OUTPUT_DIR, all_image_data, PIXEL_TO_MICRON)
