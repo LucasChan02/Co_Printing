@@ -1,0 +1,182 @@
+\begin{thebibliography}{10}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+\providecommand{\eprint}[2][]{\urlprefix\url{#1#2}}
+\providecommand{\hrefurl}[2][]{\href{#1}{#2}}
+
+\bibitem{ngo2018additive}
+Ngo, T.~D., Kashani, A., Imbalzano, G., Nguyen, K.~T., and Hui, D., 2018,
+  \enquote{Additive manufacturing (3D printing): A review of materials,
+  methods, applications and challenges,} Composites Part B: Engineering,
+  \textbf{143}, pp. 172--196.
+
+\bibitem{goh20213d}
+Goh, G.~L., Zhang, H., Chong, T.~H., and Yeong, W.~Y., 2021, \enquote{3D
+  printing of multilayered and multimaterial electronics: A review,} Advanced
+  Electronic Materials, \textbf{7}(10), p. 2100445.
+
+\bibitem{li2019hybrid}
+Li, J., Wang, Y., Xiang, G., Liu, H., and He, J., 2019, \enquote{Hybrid
+  additive manufacturing method for selective plating of freeform circuitry on
+  3D printed plastic structure,} Advanced Materials Technologies,
+  \textbf{4}(2), p. 1800529.
+
+\bibitem{child2025printegrated}
+Child, O., Hanton, O., Dawson, J., Hodges, S., and Fraser, M., 2025,
+  \enquote{Printegrated Circuits: Personal Fabrication of 3D Printed Devices
+  with Embedded PCBs,} arXiv preprint arXiv:2509.08459.
+
+\bibitem{maalderink20183d}
+Maalderink, H.~H., Bruning, F.~B., De~Schipper, M.~M., Van Der~Werff, J.~J.,
+  Germs, W.~W., Remmers, J.~J., and Meinders, E.~R., 2018, \enquote{3D Printed
+  structural electronics: embedding and connecting electronic components into
+  freeform electronic devices,} Plastics, Rubber and Composites,
+  \textbf{47}(1), pp. 35--41.
+
+\bibitem{dijkshoorn2018embedded}
+Dijkshoorn, A., Werkman, P., Welleweerd, M., Wolterink, G., Eijking, B.,
+  Delamare, J., Sanders, R., and Krijnen, G.~J., 2018, \enquote{Embedded
+  sensing: Integrating sensors in 3-D printed structures,} Journal of Sensors
+  and Sensor Systems, \textbf{7}(1), pp. 169--181.
+
+\bibitem{hassan20233d}
+Hassan, M.~S., Zaman, S., Dantzler, J.~Z., Leyva, D.~H., Mahmud, M.~S.,
+  Ramirez, J.~M., Gomez, S.~G., and Lin, Y., 2023, \enquote{3D Printed
+  Integrated Sensors: From Fabrication to Applications—A Review,}
+  Nanomaterials, \textbf{13}(24), p. 3148.
+
+\bibitem{wilkinson2019review}
+Wilkinson, N., Smith, M., Kay, R.~W., and Harris, R., 2019, \enquote{A review
+  of aerosol jet printing—a non-traditional hybrid process for
+  micro-manufacturing,} The International Journal of Advanced Manufacturing
+  Technology, \textbf{105}(11), pp. 4599--4619.
+
+\bibitem{secor2018principles}
+Secor, E.~B., 2018, \enquote{Principles of aerosol jet printing,} Flexible and
+  Printed Electronics, \textbf{3}(3), p. 035002.
+
+\bibitem{rodriguez2012dielectric}
+Rodriguez, J., Lennon, A., Luo, M., Li, Z., Yao, Y., Lu, P., Chan, C., and
+  Wenham, S., 2012, \enquote{Dielectric patterning using aerosol jet printing,}
+  Journal of Imaging Science and Technology, \textbf{56}(4), pp. 40502--1.
+
+\bibitem{jeong2023optimization}
+Jeong, H., Lee, J.~H., Kim, S., Han, S., Moon, H., Song, J.-Y., and Park,
+  A.-Y., 2023, \enquote{Optimization of process parameters in micro-scale
+  pneumatic aerosol jet printing for high-yield precise electrodes,} Scientific
+  Reports, \textbf{13}(1), p. 21297.
+
+\bibitem{secor2025additive}
+Secor, E.~B., Yeboah, D., and Gamba, L., 2025, \enquote{Additive electronics
+  manufacturing via droplet jetting technologies: materials, methods,
+  applications, and opportunities,} Nanoscale, \textbf{17}(33), pp.
+  18997--19020.
+
+\bibitem{gohel2025direct}
+Gohel, A., Gratuze, M., Ketabi, M., and Izquierdo, R., 2025,
+  \enquote{Direct-write printing for flexible and 3D electronics: Aerosol jet
+  vs. Micro dispensing,} Micromachines, \textbf{16}(8), p. 931.
+
+\bibitem{arabpoor2025experimental}
+Arabpoor, R. and Haghighi, A., 2025, \enquote{Experimental Insights into
+  Aerosol Jet Printing on 3D Curved Surfaces: Line Morphology and Resistivity,}
+  Manufacturing Letters.
+
+\bibitem{rurup2024understanding}
+Rurup, J.~D. and Secor, E.~B., 2024, \enquote{Understanding oblique deposition
+  in aerosol jet printing for conformal electronics fabrication,} Journal of
+  Manufacturing Processes, \textbf{120}, pp. 1231--1240.
+
+\bibitem{jignasu2023conformal}
+Jignasu, A., Rurup, J.~D., Secor, E.~B., and Krishnamurthy, A., 2023,
+  \enquote{Conformal aerosol jet printing using a 3-axis printer,}
+  Manufacturing Letters, \textbf{35}, pp. 523--528.
+
+\bibitem{obeidatfine}
+Obeidat, A.~S., Richmond, D., Howard-Jennings, J., Umar, A., Al-Haidari, R.,
+  Alhendi, M., Garakani, B., Smilgies, D.-M., and Poliks, M.~D., \enquote{Fine
+  Pitch Interconnection and Packaging Studies for Hybrid Electronics with
+  Aerosol Jet Printed Particle-Free Ag Ink,} .
+
+\bibitem{werum2022aerosol}
+Werum, K., Mueller, E., Keck, J., Jaeger, J., Horter, T., Glaeser, K.,
+  Buschkamp, S., Barth, M., Eberhardt, W., and Zimmermann, A., 2022,
+  \enquote{Aerosol jet printing and interconnection technologies on additive
+  manufactured substrates,} Journal of Manufacturing and Materials Processing,
+  \textbf{6}(5), p. 119.
+
+\bibitem{obilanade2021surface}
+Obilanade, D., Dordlofva, C., and T{\"o}rlind, P., 2021, \enquote{Surface
+  roughness considerations in design for additive manufacturing-a literature
+  review,} Proceedings of the design society, \textbf{1}, pp. 2841--2850.
+
+\bibitem{ahn2009representation}
+Ahn, D., Kweon, J.-H., Kwon, S., Song, J., and Lee, S., 2009,
+  \enquote{Representation of surface roughness in fused deposition modeling,}
+  Journal of Materials Processing Technology, \textbf{209}(15-16), pp.
+  5593--5600.
+
+\bibitem{wu2019predictive}
+Wu, D., Wei, Y., and Terpenny, J., 2019, \enquote{Predictive modelling of
+  surface roughness in fused deposition modelling using data fusion,}
+  International Journal of Production Research, \textbf{57}(12), pp.
+  3992--4006.
+
+\bibitem{li2019theoretical}
+Li, L., Haghighi, A., and Yang, Y., 2019, \enquote{Theoretical modelling and
+  prediction of surface roughness for hybrid additive--subtractive
+  manufacturing processes,} IISE Transactions, \textbf{51}(2), pp. 124--135.
+
+\bibitem{salary2017computational}
+Salary, R., Lombardi, J.~P., Samie~Tootooni, M., Donovan, R., Rao, P.~K.,
+  Borgesen, P., and Poliks, M.~D., 2017, \enquote{Computational fluid dynamics
+  modeling and online monitoring of aerosol jet printing process,} Journal of
+  Manufacturing Science and Engineering, \textbf{139}(2), p. 021015.
+
+\bibitem{chen2018effect}
+Chen, G., Gu, Y., Tsang, H., Hines, D.~R., and Das, S., 2018, \enquote{The
+  effect of droplet sizes on overspray in aerosol-jet printing,} Advanced
+  Engineering Materials, \textbf{20}(8), p. 1701084.
+
+\bibitem{ramesh2023computational}
+Ramesh, S., Xu, Z., Rivero, I., and Cormier, D., 2023, \enquote{Computational
+  fluid dynamics and experimental validation of aerosol jet printing with
+  multi-stage flow focusing lenses. Journal of Manufacturing Processes,} .
+
+\bibitem{jayanth_effect_2021}
+Jayanth, N., Jaswanthraj, K., Sandeep, S., Mallaya, N.~H., and Siddharth,
+  S.~R., \enquote{Effect of heat treatment on mechanical properties of 3D
+  printed {PLA},} \textbf{123}, p. 104764.
+
+\bibitem{Wang2007warpmodel}
+Wang, T.-M., Xi, J.-T., and Jin, Y., 2007, \enquote{A model research for
+  prototype warp deformation in the FDM process,} The International Journal of
+  Advanced Manufacturing Technology, \textbf{33}(11), pp. 1087--1096.
+
+\bibitem{zhang2020hybrid}
+Zhang, H., Choi, J.~P., Moon, S.~K., and Ngo, T.~H., 2020, \enquote{A hybrid
+  multi-objective optimization of aerosol jet printing process via response
+  surface methodology,} Additive Manufacturing, \textbf{33}, p. 101096.
+
+\bibitem{wang2007fdmcooling}
+Wang, T.-M., Xi, J.-T., and Jin, Y., 2007, \enquote{A model research for
+  prototype warp deformation in the FDM process,} International journal of
+  advanced manufacturing technology, \textbf{33}(11-12), pp. 1087--1096.
+
+\bibitem{alzyod2023ironing}
+Alzyod, H., Takacs, J., and Ficzere, P., 2024, \enquote{Improving surface
+  smoothness in FDM parts through ironing post-processing,}
+  \hrefurl{https://doi.org/https://doi.org/10.1177/07316844231173059}{Journal
+  of Reinforced Plastics and Composites}, \textbf{43}(11-12), pp. 671--681.
+
+\bibitem{benno2024ironing}
+Neuhaus, B., Idris, M.~K., Naderi, P., El‐Hajj, Y., and Grau, G., 2024-02,
+  \enquote{Low‐Roughness 3D‐Printed Surfaces by Ironing for the Integration
+  with Printed Electronics,} Advanced engineering materials., \textbf{26}(3).
+
+\end{thebibliography}

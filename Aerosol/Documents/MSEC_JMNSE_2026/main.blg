@@ -1,0 +1,72 @@
+This is BibTeX, Version 0.99d (TeX Live 2023)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: asmejour.bst
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Database file #1: asmeconf-sample.bib
+Repeated entry---line 65 of file asmeconf-sample.bib
+ : @article{arabpoor2025experimental
+ :                                  ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 136 of file asmeconf-sample.bib
+ : @article{jeong2023optimization
+ :                               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 407 of file asmeconf-sample.bib
+ : @article{rurup2024understanding
+ :                                ,
+I'm skipping whatever remains of this entry
+Warning--string name "https://doi.org/10.1007/s00170-006-0556-9" is undefined
+--line 536 of file asmeconf-sample.bib
+Warning--empty pages in child2025printegrated
+Warning--empty pages in arabpoor2025experimental
+Warning--empty year in obeidatfine
+Warning--empty journal in obeidatfine
+Warning--empty pages in obeidatfine
+Warning--empty journal in ramesh2023computational
+Warning--empty pages in ramesh2023computational
+Warning--empty year in jayanth_effect_2021
+Warning--empty journal in jayanth_effect_2021
+Warning--empty pages in benno2024ironing
+You've used 31 entries,
+            3520 wiz_defined-function locations,
+            988 strings with 13856 characters,
+and the built_in function-call counts, 15556 in all, are:
+= -- 979
+> -- 508
+< -- 26
++ -- 180
+- -- 149
+* -- 1015
+:= -- 1499
+add.period$ -- 62
+call.type$ -- 31
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 41
+duplicate$ -- 1651
+empty$ -- 1486
+format.name$ -- 179
+if$ -- 3524
+int.to.chr$ -- 0
+int.to.str$ -- 31
+missing$ -- 388
+newline$ -- 104
+num.names$ -- 31
+pop$ -- 500
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 645
+stack$ -- 0
+substring$ -- 867
+swap$ -- 1215
+text.length$ -- 26
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 10
+while$ -- 95
+width$ -- 33
+write$ -- 280
+(There were 3 error messages)
