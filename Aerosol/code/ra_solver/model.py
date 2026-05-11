@@ -112,7 +112,7 @@ def validate_analytical_vs_numerical(t_values, tol=1e-6):
     Prints a summary table and raises AssertionError if any relative error
     exceeds tol.
     """
-    print(f"\n{'t (mm)':>10}  {'Ra_analyt (mm)':>16}  {'Ra_numer (mm)':>15}  {'rel err':>10}")
+    print(f"\n{'t (mm)':>10}  {'Ra_analyt (mm)':>16}  {'Ra_number (mm)':>15}  {'rel err':>10}")
     print("-" * 60)
     for t in t_values:
         ra_a = Ra_analytical(float(t))

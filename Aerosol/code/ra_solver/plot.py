@@ -58,7 +58,7 @@ def plot_Ra_vs_t(t_array, Ra_array, Rz_array,
 
 
 def plot_profile_landscape(t_marks, alpha_x=ALPHA_X, alpha_y=ALPHA_Y,
-                           n_layers=N_LAYERS, n_pts_per_layer=300,
+                           n_layers=5, n_pts_per_layer=300,
                            output_dir="."):
     """
     Save one PNG per entry in t_marks to output_dir.
@@ -98,7 +98,7 @@ def plot_profile_landscape(t_marks, alpha_x=ALPHA_X, alpha_y=ALPHA_Y,
         Rz  = Rz_analytical(t, alpha_x, alpha_y)
 
         x_segs, y_segs = [], []
-        for k in range(n_layers):
+        for k in range(12):
             endpoint = (k == n_layers - 1)
             x_local = np.linspace(0.0, A, n_pts_per_layer, endpoint=endpoint)
             x_segs.append(x_local + k * A)

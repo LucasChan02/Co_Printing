@@ -18,5 +18,5 @@ THETA_DEG = 90.0
 N_QUAD = 10000
 
 # Profile landscape plot
-N_LAYERS = 5   # number of layer periods to tile in the profile view
+N_LAYERS = 12   # number of layer periods to tile in the profile view
 
