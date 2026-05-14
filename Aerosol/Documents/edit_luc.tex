@@ -3,14 +3,14 @@
     \centering
     \begin{subfigure}{\linewidth}
         \centering
-        \includegraphics[width=0.98\linewidth]{figs/profile_landscape_t0_10mm.png}
+        \includegraphics[width=0.98\linewidth]{figs/profile_t0_10mm.png}
         \caption{$t = 0.10$~mm: $R_a = 7.10$~µm, $R_z = 27.68$~µm}
         \label{fig:profile_t01}
     \end{subfigure}
     \vspace{2mm}
     \begin{subfigure}{\linewidth}
         \centering
-        \includegraphics[width=0.98\linewidth]{figs/profile_landscape_t0_50mm.png}
+        \includegraphics[width=0.98\linewidth]{figs/profile_t0_50mm.png}
         \caption{$t = 0.50$~mm: $R_a = 35.51$~µm, $R_z = 138.40$~µm}
         \label{fig:profile_t05}
     \end{subfigure}
@@ -26,8 +26,7 @@
     \label{fig:Ra_Rz_vs_t}
 \end{figure}
 
-% ── Paragraph 1: quantification ────────────────────────────────────────
-From the parabolic profile model (Eq.~\ref{eq:parabolic}), the arithmetic mean roughness $R_a$ and the maximum peak-to-valley height $R_z$ can be derived analytically for each tested layer height. Figure~\ref{fig:profiles_extreme} shows the computed surface profiles for the two extreme cases: $t = 0.10$~mm and $t = 0.50$~mm. At the minimum layer height, the profile exhibits shallow, closely spaced grooves with $R_a = 7.10$~µm and $R_z = 27.68$~µm. At the maximum layer height, the grooves are significantly deeper and wider, yielding $R_a = 35.51$~µm and $R_z = 138.40$~µm. As shown in Figure~\ref{fig:Ra_Rz_vs_t}, both $R_a$ and $R_z$ scale linearly with layer height across the full tested range. This linear relationship follows directly from the geometric self-similarity of the parabolic profile: because the groove shape is described by the same functional form at all layer heights and only its amplitude scales with $t$, the roughness integrals that define $R_a$ and $R_z$ both reduce to expressions proportional to $t$.
 
-% ── Paragraph 2: forward pointer to ink behavior ───────────────────────
-Beyond their role as surface descriptors, $R_a$ and $R_z$ directly determine the groove volume available to receive deposited ink. As layer height increases, both groove depth and groove width grow, enlarging the total groove cross-sectional area per unit projected surface. This has two consequences for AJP deposition: the actual surface area that the aerosol jet must cover per unit projected length increases, reducing the effective particle delivery density; and the groove geometry creates conditions under which deposited ink in the liquid state may redistribute away from its initial landing position. The interplay between these two effects governs whether a printed trace remains connected across the groove region, and is examined in detail in the Results and Discussion section.
+From the parabolic profile model (Eq.~\ref{eq:parabolic}), the arithmetic mean roughness $R_a$ and the maximum peak-to-valley height $R_z$ can be derived analytically for each tested layer height. Figure~\ref{fig:profiles_extreme} shows the computed surface profiles for the two extreme cases: $t = 0.10$~mm and $t = 0.50$~mm. At the minimum layer height, the profile exhibits shallow, closely spaced grooves with $R_a = 7.10$~µm and $R_z = 27.68$~µm. At the maximum layer height, the grooves are both deeper and wider, yielding $R_a = 35.51$~µm and $R_z = 138.40$~µm. As shown in Figure~\ref{fig:Ra_Rz_vs_t}, both $R_a$ and $R_z$ scale linearly with layer height across the full tested range. This linear relationship follows directly from the geometric self-similarity of the parabolic profile: because the groove shape is described by the same functional form at all layer heights and only its amplitude scales with $t$, the roughness integrals that define $R_a$ and $R_z$ both reduce to expressions proportional to $t$.
+
+Beyond their role as surface descriptors, $R_a$ and $R_z$ directly determine the groove volume available to receive deposited ink. As layer height increases, both groove depth and groove width grow, enlarging the total groove cross-sectional area per unit projected surface. This has two consequences for AJP deposition, as the actual surface area that the aerosol jet must cover per unit projected length increases, reducing the effective particle delivery density. The groove geometry creates conditions under which deposited ink in the liquid state may redistribute away from its initial landing position. The interplay between these two effects governs whether a printed trace remains connected across the groove region, and is examined in detail in the Results and Discussion section.

@@ -2,6 +2,7 @@ import os
 
 import matplotlib
 matplotlib.use('Agg')   # non-interactive backend: no popup windows
+matplotlib.rcParams['font.family'] = 'Times New Roman'
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import numpy as np
@@ -47,13 +48,13 @@ def plot_Ra_vs_t(t_array, Ra_array, Rz_array,
     t_lo = min(float(t_array[0]),  float(t_marks[0]))
     t_hi = max(float(t_array[-1]), float(t_marks[-1]))
     ax.set_xlim(t_lo - 0.02, t_hi + 0.02)
-    ax.set_xlabel("Layer height t (mm)")
-    ax.set_ylabel("Roughness (µm)")
-    ax.set_title("Surface Roughness Ra & Rz vs. Layer Height")
+    ax.set_xlabel("Layer height t (mm)", fontsize=18)
+    ax.set_ylabel("Roughness (µm)", fontsize=18)
+    ax.set_title("Surface Roughness Ra & Rz vs. Layer Height", fontsize=18)
     ax.grid(color='grey', linestyle='--', alpha=0.6)
     ax.legend(handles=handles, loc="upper left")
 
-    fig.savefig(output_path, dpi=150, bbox_inches="tight")
+    fig.savefig(output_path, dpi=1200, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -75,7 +76,7 @@ def plot_profile_landscape(t_marks, alpha_x=ALPHA_X, alpha_y=ALPHA_Y,
     PEAK_TEXT_X_OFFSET   = 28   # µm right of peak marker line
     PEAK_TEXT_Y_OFFSET   = 40    # µm shift from segment midpoint (+ = up)
     # ── y-axis display window (µm) — change to zoom in/out ───────────────────
-    Y_PLOT_MIN = -100           # µm  bottom edge
+    Y_PLOT_MIN = -150           # µm  bottom edge
     Y_PLOT_MAX =  100           # µm  top edge
     # ─────────────────────────────────────────────────────────────────────────
 
@@ -97,9 +98,12 @@ def plot_profile_landscape(t_marks, alpha_x=ALPHA_X, alpha_y=ALPHA_Y,
         Ra  = Ra_analytical(t, alpha_x, alpha_y)
         Rz  = Rz_analytical(t, alpha_x, alpha_y)
 
+        # Enough periods to cover the shared x window; smaller t → more periods
+        n_draw = int(np.ceil(x_right_max / (A * 1000))) + 1
+
         x_segs, y_segs = [], []
-        for k in range(12):
-            endpoint = (k == n_layers - 1)
+        for k in range(n_draw):
+            endpoint = (k == n_draw - 1)
             x_local = np.linspace(0.0, A, n_pts_per_layer, endpoint=endpoint)
             x_segs.append(x_local + k * A)
             y_segs.append(f_parabola(x_local, A, B))
@@ -131,10 +135,10 @@ def plot_profile_landscape(t_marks, alpha_x=ALPHA_X, alpha_y=ALPHA_Y,
             x_v2  + VALLEY_TEXT_X_OFFSET,
             valley_um / 2 + VALLEY_TEXT_Y_OFFSET,
             f"Δ = {-valley_um:.2f} µm",
-            color='darkviolet', fontsize=7.5, va='center',
+            color='darkviolet', fontsize=14, va='center',
         )
 
-        # Marker 2: mean line → first peak  (at x = A/2)
+        # Marker 2: mean line → first peak  (at x = A/2)14
         x_peak = (A / 2.0) * 1000
         ax.annotate(
             '',
@@ -146,7 +150,7 @@ def plot_profile_landscape(t_marks, alpha_x=ALPHA_X, alpha_y=ALPHA_Y,
             x_peak + PEAK_TEXT_X_OFFSET,
             peak_um / 2 + PEAK_TEXT_Y_OFFSET,
             f"Δ = {peak_um:.2f} µm",
-            color='darkgreen', fontsize=7.5, va='center',
+            color='darkgreen', fontsize=14, va='center',
         )
 
         xlim = shared_xlim
@@ -154,20 +158,21 @@ def plot_profile_landscape(t_marks, alpha_x=ALPHA_X, alpha_y=ALPHA_Y,
 
         ax.set_xlim(xlim)
         ax.set_ylim(ylim)
-        ax.set_yticks([-50, 0, 50])
+        ax.set_yticks([-100, -50, 0, 50])
         ax.set_aspect('equal')
         ax.set_title(
             f"t = {t:.2f} mm  |  Ra = {Ra * 1000:.2f} µm  |  Rz = {Rz * 1000:.2f} µm  |  "
-            f"A = {A * 1000:.1f} µm  |  B = {B * 1000:.1f} µm"
+            f"A = {A * 1000:.1f} µm  |  B = {B * 1000:.1f} µm",
+            fontsize=18,
         )
-        ax.set_xlabel("Position along surface (µm)")
-        ax.set_ylabel("Deviation (µm)")
+        # ax.set_xlabel("Position along surface (µm)", fontsize=18)
+        # ax.set_ylabel("Deviation (µm)", fontsize=18)
         ax.legend(loc="upper right", fontsize=8)
         ax.grid(color='grey', linestyle='--', alpha=0.6)
 
         fname = f"profile_landscape_t{t:.2f}mm.png"
         out   = os.path.join(output_dir, fname)
-        fig.savefig(out, dpi=150, bbox_inches="tight")
+        fig.savefig(out, dpi=1200, bbox_inches="tight")
         plt.close(fig)
         saved.append(out)
 
