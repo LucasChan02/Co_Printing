@@ -71,9 +71,9 @@ def plot_profile_landscape(t_marks, alpha_x=ALPHA_X, alpha_y=ALPHA_Y,
     (orange). All cases share fixed axis limits derived from the largest t.
     """
     # ── annotation text positions (edit directly to reposition labels) ──────
-    VALLEY_TEXT_X_OFFSET = 50   # µm right of valley marker line
-    VALLEY_TEXT_Y_OFFSET = -20    # µm shift from segment midpoint (+ = up)
-    PEAK_TEXT_X_OFFSET   = 28   # µm right of peak marker line
+    VALLEY_TEXT_X_OFFSET = 30   # µm right of valley marker line
+    VALLEY_TEXT_Y_OFFSET = -70    # µm shift from segment midpoint (+ = up)
+    PEAK_TEXT_X_OFFSET   = 30   # µm right of peak marker line
     PEAK_TEXT_Y_OFFSET   = 40    # µm shift from segment midpoint (+ = up)
     # ── y-axis display window (µm) — change to zoom in/out ───────────────────
     Y_PLOT_MIN = -150           # µm  bottom edge
@@ -118,7 +118,7 @@ def plot_profile_landscape(t_marks, alpha_x=ALPHA_X, alpha_y=ALPHA_Y,
 
         ax.plot(x, y, color="navy", linewidth=0.8, label="Surface profile")
         ax.axhline(0, color="red", linestyle="--", linewidth=0.6,
-                   label=f"Mean line f₂ = B/3 = {f2 * 1000:.2f} µm (y = 0)")
+                   label=f"Mean line f₂ = B/3 = {f2 * 1000:.2f} µm")
 
         ax.fill_between(x, y, 0, where=(y >= 0), color="green",  alpha=0.15)
         ax.fill_between(x, y, 0, where=(y <= 0), color="orange", alpha=0.15)
@@ -167,7 +167,7 @@ def plot_profile_landscape(t_marks, alpha_x=ALPHA_X, alpha_y=ALPHA_Y,
         )
         # ax.set_xlabel("Position along surface (µm)", fontsize=18)
         # ax.set_ylabel("Deviation (µm)", fontsize=18)
-        ax.legend(loc="upper right", fontsize=8)
+        ax.legend(loc="lower right", fontsize=12)
         ax.grid(color='grey', linestyle='--', alpha=0.6)
 
         fname = f"profile_landscape_t{t:.2f}mm.png"
